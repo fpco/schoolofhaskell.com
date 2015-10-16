@@ -1,0 +1,148 @@
+$(function(){
+    $.fn.enabled = function(enabled){
+      $(this).each(function(){
+        var self = $(this);
+        self.unbind('hover').unbind('click');
+        self.click(function(){
+          return enabled;
+        });
+        if(enabled) {
+          self.removeClass('disabled');
+          title = self.attr("data-title");
+          if (title) {
+            self.attr("title", title);
+          }
+        } else {
+          self.hover(function(){
+            self.addClass('disabled');
+          },function(){
+            self.removeClass('disabled');
+          });
+          self.attr("title", "Please wait until the tutorial has been saved.");
+        }
+      });
+    };
+
+    var cmNode = document.getElementById("codemirror");
+    var cm = fpco.createCodeMirror (
+            { cmsElement: cmNode
+            , cmsMode: "markdown"
+            , cmsFencedCodeBlocks: true
+            , cmsLineNumbers: false
+            , cmsWrapping: true
+            , cmsReadOnly: false
+            , cmsDragDrop: true
+            , cmsSilent: false
+            , cmsInfiniteViewport: false
+            , cmsSohFolding: false
+            , cmsShowTrailingSpace: false
+            , cmsIndentUnit: 4
+            , cmsMatchBrackets: true
+            , cmsCloseBrackets: { instance: "Just", slot1: "[]()"}
+            , cmsHighlightLine: false
+            , cmsMatchSelection: false
+            , cmsShowAlignments: false
+            });
+    var $content = $("#content");
+    var token = $content.data("concurrent");
+    cm.setValue($content.hide().val());
+    var $save = $("#save");
+    var saveurl = $content.data("saveurl");
+
+    var buttons = $("input[type=submit]");
+    var unsaved = false;
+
+    buttons.map(function(i, x) {
+        title = $(x).attr("data-title");
+        if (title) {
+            $(x).attr("title", title);
+        }
+    });
+
+    var enable = function () {
+        $('body').addClass('saving');
+        buttons.enabled(false);
+        $save.attr("disabled", false);
+        $save.html("Save");
+        unsaved = true;
+    };
+    var disable = function () {
+        $('body').removeClass('saving');
+        buttons.enabled(true);
+        $save.attr("disabled", true);
+        $save.html("Saved");
+    }
+    disable();
+
+    var inProgress = false;
+
+    var save = function () {
+        if (inProgress) return;
+        inProgress = true;
+        unsaved = false;
+        disable();
+        $.ajax({
+            url: saveurl,
+            complete: function () {
+                inProgress = false;
+            },
+            data: {
+                token: token,
+                content: cm.getValue()
+            },
+            type: "POST",
+            success: function (data) {
+                if (data["new-token"]) {
+                    token = data["new-token"];
+                }
+                else {
+                    $("button").hide();
+                    var cmRO = fpco.createCodeMirror (
+                        { cmsElement:document.getElementById("error-content")
+                        , cmsMode: "markdown"
+                        , cmsFencedCodeBlocks: false
+                        , cmsLineNumbers: false
+                        , cmsWrapping: true
+                        , cmsReadOnly: true
+                        , cmsDragDrop: false
+                        , cmsSilent: false
+                        , cmsInfiniteViewport: false
+                        , cmsSohFolding: false
+                        , cmsShowTrailingSpace: false
+                        , cmsIndentUnit: 4
+                        , cmsMatchBrackets: true
+                        });
+                    cmRO.setValue(cm.getValue());
+                    $("#error-display").show();
+                    $("#normal-display").hide();
+                    $("#error-display > p.errors").text(data.msg || "Unknown error occurred");
+                }
+            }
+        });
+    }
+
+    $save.click(save);
+
+    cm.on("change", function(){
+        enable();
+    });
+
+    var autosave = function () {
+        if (unsaved) {
+            save();
+        }
+    };
+    window.setInterval(autosave, 500);
+
+    window.onbeforeunload = function () {
+        if (unsaved || inProgress) {
+            return "You have unsaved changes. Are you sure you want to leave this page?"
+        }
+    };
+
+  $('td.errors').each(function(){
+    var div = $('<div class="errors"></div>');
+    div.text($(this).text())
+    $(this).prev().append(div);
+  });
+})

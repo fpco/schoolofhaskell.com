@@ -1,0 +1,26 @@
+$(function() {
+  $("#arrange-list").sortable(
+    { onDragStart : function($item, container, _super) {
+        _super($item, container);
+        $item.detach().appendTo("#arrange");
+      }
+    });
+  $("#arrange-save").bind("click", function() {
+    var result = [];
+    function traverse(p) {
+      return function (x, y) {
+        var v = x.key ? x : y;
+        var k = v.key.slice(1);
+        result.push([p, k]);
+        if (v.children) {
+          v.children.map(traverse(k));
+        }
+      }
+    };
+    $("#arrange-list").sortable("serialize").map(traverse(null));
+    var redirectUrl = $("#arrange-url").attr("data-url");
+    $.post("", { arrangement: JSON.stringify(result) })
+      .done(function() { window.location.href = redirectUrl })
+      .fail(function() { $.growlUI("Error while saving arrangement"); });
+  });
+});

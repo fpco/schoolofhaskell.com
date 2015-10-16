@@ -1,0 +1,16 @@
+.media-list {
+  .author-name {
+    margin-left: 0.5em;
+  }
+  .content-type-icon {
+    display: inline-block;
+    width: 20px;
+    i {
+      text-shadow: 1px 1px 1px #ffffff;
+    }
+  }
+  .media-content {
+    margin-left: 20px;
+    padding-left: 5px;
+  }
+}

@@ -1,0 +1,7 @@
+Someone (presumably you) has asked for your email address to be associated with
+an account on FP Haskell Center. If you made this request, please click on the
+link below. If not, you can safely ignore this email.
+
+@{verurl}
+
+Thank you

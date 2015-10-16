@@ -1,0 +1,5 @@
+<h1>Confirm Account Deletion
+^{deleteAccountWarning}
+<form method=POST>
+    <input type=hidden name=token value=#{token}>
+    <input type=submit value="Confirm Account Deletion">

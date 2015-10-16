@@ -1,0 +1,10 @@
+<!-- Desk.com feedback lightbox -->
+<!-- CSS & JS -->
+<link href="https://desk-customers.s3.amazonaws.com/shared/email_widget.css" media="screen" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
+
+<!-- The lightbox -->
+<div id="desk-support-box" .fpco>
+    <a id="desk-support-box-close">&otimes;
+    <iframe data-src="https://fpcomplete.desk.com/customer/widget/emails/new#{deskComQuery}" id="desk-widget-iframe">
+<div id="desk-darkness">

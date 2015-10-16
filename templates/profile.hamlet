@@ -1,0 +1,128 @@
+<div .row>
+    <div .span12>
+        <h1>Account
+        <div .tabbable>
+            <ul .nav .nav-tabs>
+                <li .active>
+                    <a href="#profile" #profile-tab-button>Profile
+                <li>
+                    <a href="#personal-image" #personal-image-tab-button>Picture
+                <li>
+                    <a href="#email-addresses" #email-addresses-tab-button>Emails
+                <li>
+                    <a href="#change-password" #change-password-tab-button>Password
+                <li>
+                    <a href="#github" #github-tab-button>GitHub
+                <li>
+                    <a href="#ssh" #ssh-tab-button>SSH
+                <li>
+                    <a href="#token" #token-tab-button>Token
+                <li>
+                    <a href="#management" #management-tab-button>Management
+
+            <div .tab-content>
+                <div .profile .tab-pane .active #tab-profile>
+                    <div .alert alert-block>
+                        <h4>Warning
+                        <p>
+                            Note: currently Emacs key mappings are very rudimentary, and may
+                            not be sufficient for many people's needs. We will be improving
+                            this support in a future release.
+                    <form method=post enctype=#{enctype} action=@{ProfileR}?_method=PUT>
+                        ^{widget}
+                        <label .tarball-label>Tarball of all tutorials:
+                        <a href=@{ExportAllTutorialsR}>all-tutorials.tar.gz
+                        <p .update-profile>
+                            <input type="submit" .btn value="Update profile">
+
+                <div .tab-pane #tab-personal-image>
+                     <p>
+                         We use
+                         <a href="http://gravatar.com/">Gravatar
+                         for your on-site image. Your Gravatar is based on your email address,
+                         <strong>#{userEmail $ entityVal user}.
+                     <p>
+                         Currently, your Gravatar image is:
+                     <p>
+                         <img src=#{userGravatar 120 $ entityVal user}>
+                     <p>
+                         If you wish to change this image, please do so on
+                         <a href="http://gravatar.com">Gravatar's website.
+
+                <div .tab-pane #tab-email-addresses>
+                    <p>
+                        <strong>Primary email:</strong> #{userEmail $ entityVal user}
+                        $if not $ null emails
+                            <p>Other emails:
+                            <ul .emails>
+                                $forall Entity iid ident <- emails
+                                    <li>
+                                        #{identIdent ident}
+                                        $if not hasNoPassword
+                                            <form method=post action=@{MakePrimaryEmailR iid}>
+                                                <input type="submit" .btn value="Set as primary">
+                                        <form method=post action=@{DeleteEmailR iid}?_method=DELETE>
+                                            <input type="submit" .btn value="Delete">
+                        $if hasNoPassword
+                            <p .text-info><b>Note</b>: In order to change your primary email address, you must first create a password in the password tab.
+                        <form method=post action=@{AddEmailR}>
+                            <label for=add-new-email>Add new email:
+                            <div .input-append>
+                                <input .span3 type=email name=email #add-new-email>
+                                <input type="submit" .btn value="Send confirmation email">
+
+                <div .tab-pane #tab-change-password>
+                    $if (&&) hasNoPassword needOldPassword'
+                        <p>
+                            Your account does not currently have a password set.
+                            For your security, in order to set a new password, you must first reverify your email address.
+                        <form method=post action=@{AuthR forgotPasswordR}>
+                            <input type=hidden name=email value=#{userEmail $ entityVal user}>
+                            <input type=submit .btn value="Verify email address now">
+                    $else
+                        <form method=post action=@{AuthR setpassR}>
+                            $if needOldPassword'
+                                <label for=current>Current Password
+                                <input type=password name=current id=current>
+                            <label for=new>New Password
+                            <input type=password name=new id=new>
+                            <label for=confirm>Confirm
+                            <div .input-append>
+                                <input type=password name=confirm id=confirm>
+                                <input type="submit" .btn value="Change Password">
+
+                <div .tab-pane #tab-github>
+                     $if isNothing (profileGithubAccessKey profile0)
+                         <p>
+                             Authorizing GitHub access will both add FP Haskell Center as an authorized app,
+                             as well as add your SSH public key to your account to allow us to push to and pull
+                             from your repositories.
+                     $maybe _ <- profileGithubAccessKey profile0
+                         <form method=post action=@{GithubR}?_method=DELETE>
+                             <input type="submit" .btn value="Revoke GitHub access">
+                     $nothing
+                         <form method=get action=@{GithubR}>
+                             <input type="submit" .btn value="Grant GitHub access">
+
+                <div .tab-pane #tab-ssh>
+                     <p>
+                         This is useful if you believe your SSH key was somehow
+                         compromised, or if you are somehow unable to add the key to
+                         your Git repo.
+                     <textarea #ssh-public-key>#{decodeUtf8 $ publicKey keypair}
+                     <form method=post action=@{NewSshKeyR}>
+                         <input type="submit" .btn value="Reset SSH Key">
+
+                <div .tab-pane #tab-management>
+                    <h2>Account Deletion
+                    <p>
+                      Account deletion not yet supported from schoolofhaskell.com.
+                      Please visit the
+                      <a href="https://www.fpcomplete.com/account#management">account management page on fpcomplete.com
+                      instead.
+
+$# Commented out until SoH is the only database user.
+$#                    ^{deleteAccountWarning}
+$#                    <form action=@{DeleteAccountR} method=GET>
+$#                        <input .btn
+$#                          type="submit" value="Permanently Delete Account">

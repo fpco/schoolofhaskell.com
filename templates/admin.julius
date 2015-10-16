@@ -1,0 +1,21 @@
+$(function(){
+    $(".drop-beta").click(function(){
+        var $this = $(this),
+            url = $this.data("url");
+        $.ajax({
+            url: url,
+            type: 'DELETE',
+            success: function() {
+                $this.parents("tr").detach();
+            }
+        });
+        return false;
+    });
+    $("#bump").submit(function(){
+        var betacount = $("#betacount").text(),
+            bumpcount = $("#bumpcount").val(),
+            res = confirm("This will add " + (bumpcount - betacount) + " new users to the system. Are you sure?")
+            ;
+        return res;
+    });
+});

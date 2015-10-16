@@ -1,0 +1,7 @@
+<style> @media (max-width: 979px) { #trial-sidebar { display: none; } }
+<div id="trial-sidebar" class="text-center" style="float: left; width: 4in;">
+  <div style="width: 100%; height: .25in; background-color: white;">
+  <div class="box2 roundbox" style="text-align: left; border: lightgrey solid 1px; padding: 5px 10px 0px;">
+    <p><a href=@{RecentContentR}>View all published content
+    <p><a href=@{UsersR}>View all users with published content
+  <div style="width: 100%; height: .25in; background-color: white;">

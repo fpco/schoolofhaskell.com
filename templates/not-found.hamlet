@@ -1,0 +1,18 @@
+<h1>
+  <span .hs-conid>Nothing
+  <span .hs-keyglyph>::
+  <span .hs-type>
+    <span .hs-conid>Maybe
+    <span .hs-conid>Page
+
+<div .inner>
+  <h2>404
+  <h3>That page doesn't seem to exist.
+  <p>
+    <code #path>
+
+<script>setTimeout(function(){ var p = document.getElementById('path'); p.textContent = p.innerText = window.location.pathname; })
+
+<p class="school-link">
+  Were you looking for the
+  <a href="/school">School of Haskell?

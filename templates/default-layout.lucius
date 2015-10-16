@@ -1,0 +1,576 @@
+body {
+  font-size: 16px !important;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* Navbar */
+
+.navbar {
+  .navbar-inner {
+    background: #3c3f41;
+  }
+  .brand {
+    font-size: 14px;
+    img {
+      width: 6em;
+    }
+  }
+  .icon-wrench {
+    margin: 0 -0.5em 0 -0.5em;
+    padding: 0 1em 0 1em;
+    height: 20px;
+  }
+}
+.navbar-inverse .nav .active a {
+  background: #333638;
+}
+.navbar-inverse .nav > li > a {
+  color: #a7a7a7
+}
+.navbar-inverse .btn-navbar {
+  background: #333638;
+}
+.navbar-inverse .nav > li a:hover,
+.navbar-inverse .btn {
+  background: #333537 !important;
+}
+@media (max-width: 979px) {
+  .icon-wrench {
+    padding-left: 1em !important;
+  }
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* Breadcrumb */
+
+.breadcrumb {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+h1 {
+  margin-top: 20px;
+}
+/* The breadcrumb creates extra spacing, so when there's a breadcrumb,
+   we remove the margin of the page header, leaving sufficient spacing
+   by the breadcrumb. */
+.breadcrumb-container + .main-content {
+  h1 {
+    margin-top: 0;
+  }
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* Footer */
+
+.footer {
+  padding: 30px 0;
+  margin-top: 70px;
+  border-top: 1px solid #e5e5e5;
+  background-color: #f5f5f5;
+
+  ul.footer-menu {
+    list-style-type: none;
+    li {
+      display: inline-block;
+    }
+    li + li {
+      margin-left: 0.5em;
+    }
+    li + li:before {
+      margin-right: 0.5em;
+      content: "·";
+      color: #999;
+    }
+  }
+
+  ul.menu {
+    li {
+      display: inline-block;
+    }
+    li + li {
+      margin-left: 0.5em;
+    }
+  }
+
+  .copyright {
+    margin-left: 25px;
+  }
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* Main content area */
+
+.main-content {
+  min-height: 100%;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* Gravatars */
+
+.gravatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 2px;
+  background: #eee;
+}
+.empty-gravatar {
+  width: 0;
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* Tutorials */
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* Article snippets */
+
+.container  {
+  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+
+
+  h1,h2,h4,h4,h5 {
+    font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+
+  }
+}
+
+article {
+
+  h1 {
+    font-family: Merriweather !important;
+  }
+
+  font-family: Merriweather !important;
+  li {
+    font-family: Merriweather !important;
+    line-height: 1.6em;
+  }
+  li + li {
+    margin-top: 0.5em;
+  }
+  div.code {
+    background: #f9f9f9;
+    border: 1px solid #d1d1d1;
+    position: relative;
+    border-radius: 0.2em;
+    margin: 0.25em 0 0.75em 0;
+    min-height: 2.5em;
+  }
+  code { color: #005580; font-size: 14px; white-space: pre; }
+  a.hoogle > code { color: #0088cc; font-size: 14px; white-space: pre; border: 0; }
+  .expand-code { display: none; }
+  /* Restrict the height of code, so that the vertical height of the article
+     doesn't change drastically on snippet insertion */
+  pre {
+    overflow: auto;
+    word-wrap: normal;
+  }
+  code.active {
+    display: block;
+    max-height: 430px;
+  }
+  /* Drop all heading sizes down one to make typographical sense. */
+  h1 { font-size: 31.5px; }
+  h3 { font-size: 17.5px; }
+  h4 { font-size: 14px; }
+  h5,h6 { font-size: 11.9px; }
+  p { line-height: 1.7em; }
+  h1,h2,h3,h4,h5,h6 {
+    code {
+      font-size: inherit !important;
+    }
+    a {
+      color: #444;
+    }
+    a:before {
+      margin-left: -1.5em;
+      padding-right: 0.5em;
+      font-family: fontawesome;
+      content: "\f0c1";
+      font-size: 20px;
+      color: #fff;
+    }
+    a:hover {
+      text-decoration: none;
+      color: #0088cc;
+    }
+    a:hover:before {
+      color: #888;
+    }
+  }
+  h2 {
+    font-size: 24.5px;
+  }
+
+  .popover {
+    font-family: actor;
+    h3.popover-title {
+      font-family: actor !important;
+      font-size: 1em;
+    }
+    .popover-content {
+      width: 15em;
+      font-size: 1em;
+    }
+  }
+
+  .controlsRun {
+    display: block;
+    padding: 0.5em;
+    text-align: right;
+    background: #f2f2f2;
+
+    a.clone {
+      margin-right: 1em;
+      font-family: actor;
+      text-decoration: none;
+      span {
+        padding-left: 0.5em;
+      }
+    }
+    a.run, a.reset, a.show-code {
+      span { display: none; }
+      font-size: 16px;
+    }
+    a.reset {
+      margin-left: 0.5em;
+      color: #a2becc;
+    }
+    a.reset { display: none; }
+    a.show-code { margin-right: 0.75em; }
+    a.run:hover, a.show-code:hover {
+      text-decoration: none;
+    }
+    a.show-code.active {
+      color: #DC0D0D;
+    }
+    a[disabled] {
+      color: #a2becc;
+      cursor: default;
+    }
+  }
+  .collapse-area {
+    .collapse-header {
+      background: #0088cc;
+      color: #fff;
+      padding: 0.3em;
+      cursor: pointer;
+    }
+    .hidden-toggle:before {
+      content: "\f0d7";
+      font-family: fontawesome;
+      margin-right: 0.5em;
+      margin-left: 0.25em;
+    }
+    .collapsed-files {
+      overflow: auto;
+      height: auto;
+    }
+  }
+  .collapse-area.collapse-disabled {
+    display: none;
+  }
+  .collapse-area.collapse-area-off {
+    .collapsed-files {
+      height: 0px;
+      overflow: hidden;
+    }
+    .hidden-toggle:before {
+      content: "\f0da";
+    }
+  }
+  .snippet-stdio {
+    .stdout {
+      margin: 0.5em;
+      padding-right: 2em;
+      position: relative;
+      word-wrap: break-word;
+    }
+    /* Anti-bootstrap input */
+    .stdin {
+      -webkit-box-shadow: none;
+      -moz-box-shadow: none;
+      box-shadow: none;
+      -webkit-transition: none;
+      -moz-transition: none;
+      -o-transition: none;
+      transition: none;
+      padding: 0;
+      margin: 0;
+    }
+  }
+  .hoogle-results {
+    margin: 0.25em;
+
+    .hoogle-inner {
+      background: #fff;
+      padding: 0.5em;
+      border-radius: 3px;
+      border: 1px solid #ddd;
+
+      .close-link {
+        position: relative;
+        float: right;
+        /* Hack because I need a wrapper div from Training */
+        margin-top: -0.5em;
+        margin-right: -0.5em;
+      }
+    }
+  }
+  .snippet-output-errors {
+    margin: 1em 0.5em 0.5em 0.5em;
+    position: relative;
+
+    ul {
+      list-style-type: none;
+      margin: 0;
+      position: relative;
+    }
+    pre {
+      border: 0;
+      border-radius: 0;
+      padding: 0.25em;
+      margin: 0;
+      background: inherit;
+      color: inherit;
+    }
+    .close-link {
+      color: inherit;
+      background: inherit;
+    }
+  }
+  .snippet-editors {
+    z-index: 0;
+    padding: 0.25em;
+  }
+  .close-link {
+    padding: 0.5em;
+    background: #eaeaea;
+    border-bottom-left-radius: 0.2em;
+    border-top-right-radius: 0.2em;
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  .close-link:hover {
+    text-decoration: none;
+  }
+  .snippet-title {
+    padding: 0.5em 0 0 0.5em;
+    .snippet-icon {
+      font-family: FontAwesome;
+      display: inline-block;
+      margin-right: 0.5em;
+    }
+  }
+  .fullModuleCode + div {
+    .snippet-title {
+      margin-top: 0.5em;
+      border-top: 1px solid #ccc;
+      padding-top: 0.5em;
+    }
+  }
+  .CodeMirror {
+    height: auto;
+    min-height: 1em;
+    line-height: 1.5em;
+    background: transparent;
+    font-size: 14px !important;
+    .highlighted {
+      background: rgba(250, 210, 0, 0.45) !important;
+    }
+  }
+  .CodeMirror-widget {
+    margin-left: 2em;
+    line-height: 1.8;
+  }
+  .CodeMirror.collapsed {
+    height: 10em !important;
+  }
+  .editor {
+    .expander {
+      text-align: center;
+      display: block;
+      padding: 0.5em;
+      text-decoration: none;
+      border-bottom-left-radius: 2px;
+      border-bottom-right-radius: 2px;
+
+      .ellipsis {
+        background: white;
+        border: 1px solid #ccc;
+        padding: 0 0.5em;
+        height: 1em;
+        line-height: 0.5em;
+        display: inline-block;
+        color: #555;
+        cursor: pointer;
+      }
+      .ellipsis:hover {
+        background: #ddd;
+        color: #333;
+      }
+    }
+  }
+  .web-runner {
+    margin: 0.5em;
+    padding: 0.5em;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    background: #f5f5f5;
+
+    iframe {
+      border: 0;
+      margin-top: 0.5em;
+      margin-bottom: 0;
+      background: white;
+    }
+    .controls {
+      i {
+        cursor: pointer;
+        color: #0088cc;
+      }
+      i:hover {
+        color: #222;
+      }
+      i + i {
+        margin-left: 0.5em;
+      }
+      .icon-remove {
+        float: right;
+      }
+    }
+  }
+  /* Overriding bootstrap */
+  .hidden {
+    display: block;
+    visibility: visible;
+  }
+  .controlsShowHide {
+    margin-bottom: 0.5em;
+  }
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* Responsivity */
+
+.tutorial-body {
+  float: left !important;
+}
+.tutorial-nav {
+  float: right !important;
+}
+
+@media (max-width: 979px) {
+  .related-content { float: right; }
+  .author-name {
+    display: block;
+    margin-left: 20px !important;
+    padding-left: 5px;
+    margin-top: 5px;
+  }
+  article {
+    h1,h2,h3,h4,h5,h6 {
+      a:hover:before {
+        color: #fff;
+      }
+    }
+  }
+  .tutorial-nav {
+    float: none !important;
+    width: auto !important;
+  }
+  .tutorial-body {
+    float: none !important;
+    width: auto !important;
+  }
+}
+
+@media (min-width: 980px) and (max-width: 1199px) {
+  .navbar-search {
+    display: none;
+  }
+  .tutorial-nav {
+    width: 200px;
+  }
+  .tutorial-body {
+    width: 720px;
+  }
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* Account page */
+
+#accountPage {
+  h1 {
+    margin: 20px 0 0 0;
+  }
+  h2 {
+    font-size: 20px;
+  }
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* Group contents */
+
+.group-contents {
+  .span8 {
+    float: left;
+  }
+  .span4 {
+    float: right;
+  }
+}
+
+.container > .alert-block {
+  margin-top: 1em;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* Bootstrap overrides */
+
+.alert {
+  /* The default alert color isn't quite easy enough to read */
+  color: #aa874a
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* Social stuff */
+
+.social {
+  margin-bottom: .8em;
+  display: block;
+  a {
+    text-decoration: none;
+  }
+  i {
+    font-size: 1.1em;
+    color: #fff;
+    padding: 0.25em;
+    border-radius: 0.25em;
+    width: 1em;
+    display: inline-block;
+    text-align: center;
+  }
+  i.icon-twitter {
+    background: #0088cc;
+  }
+  i.icon-facebook {
+    background: #3b5998
+  }
+  i.icon-google-plus {
+    background: #dd4b39
+  }
+}
+
+.well {
+  pre {
+    background: #fcfcfc;
+  }
+  h2 {
+    margin-top: 0;
+  }
+}
+
+code { color: #005580; font-size: 14px; white-space: pre; }

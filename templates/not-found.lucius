@@ -1,0 +1,31 @@
+body {
+  text-align: center;
+}
+h1 * {
+  font-family: merriweather,georgia, serif;
+}
+h1 {
+  color: #444;
+  margin-top: 0;
+  padding-top: 0.5em;
+  padding-bottom: 0em;
+  font-size: 4em;
+  line-height: 1.5em;
+  font-weight: normal;
+}
+h2 {
+  font-size: 1.5em;
+  font-weight: normal;
+  margin-top: 1em;
+  color: #888;
+  font-weight: normal;
+}
+h3 {
+  margin-top: 1em;
+  font-weight: normal;
+  margin-bottom: 2em;
+  color: #444;
+}
+.school-link {
+  margin-top: 3em;
+}

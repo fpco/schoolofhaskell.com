@@ -1,0 +1,22 @@
+// Copied from https://desk-customers.s3.amazonaws.com/shared/email_widget.js
+// (with modifications)
+
+$(function() {
+  $(".desk-cta").click(function() {
+    // These next two lines are the modification
+    var iframe = $('#desk-support-box > iframe');
+    iframe.attr("src", iframe.attr("data-src") + "&ticket%5Bcustom_page%5D=" + encodeURIComponent(document.location));
+    $('#desk-support-box').show();
+    $('#desk-darkness').show()
+    return false;
+  });
+  $("#desk-support-box-close").click(function() {
+    $('#desk-support-box').hide();
+    $('#desk-darkness').hide();
+    return false;
+  });
+  $("#desk-darkness").click(function() {
+    $('#desk-support-box').hide();
+    $('#desk-darkness').hide();
+  });
+});

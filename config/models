@@ -1,0 +1,229 @@
+-- Migrations
+MigrationPerformed
+    migration Int
+
+    UniqueMigrationPerformed migration
+    deriving Show Generic
+
+-- Account management
+User
+    email Text
+    password Text Maybe
+    verkey Text Maybe
+    verified Bool
+    securityToken SecurityToken
+    needsNewPassword Bool
+
+    UniqueUser email
+    UniqueSecurityToken securityToken
+    deriving Show Generic Typeable
+
+-- Server side session management
+ServerSession
+    user UserId Maybe
+    when UTCTime
+    deriving Show Generic
+
+-- FIXME add a cron job or similar to delete entries more than 30 minutes old
+SessionLog
+    session ServerSessionId
+    when UTCTime
+    message Text
+    deriving Show Generic
+
+-- Following table is for caching only.
+UserSummary
+    handle UserHandle
+    display Text
+    gravatar Text
+    tutcount Int
+
+    UniqueUserSummary handle
+    deriving Show Generic
+
+UserSetting
+    user UserId
+    key' Text sql=key
+    value Text
+
+    UniqueUserSetting user key'
+    deriving Show Generic
+
+Ident
+    user UserId
+    ident Text -- currently, this is always an email address
+    lident LowerCaseText -- currently, this is always an email address
+    email Bool
+
+    UniqueIdent ident
+    deriving Show Generic
+
+ConfirmEmail
+    user UserId
+    email LowerCaseText
+    expires UTCTime
+    verkey Text
+    deriving Show Generic
+
+Login
+    user Int
+    email Text Maybe
+    when UTCTime
+    plugin Text
+    deriving Show Generic
+
+Profile
+    user UserId
+
+    handle UserHandle
+    normalizedHandle NormalizedHandle
+
+    display Text
+    keymap Keymap Maybe
+    githubAccessKey GithubAccessKey Maybe
+    theme Text Maybe
+    fontSize Int32
+    searchWithRegex Bool Maybe
+    settingsSubstitutions Text Maybe
+
+    sshKeyPair SSHKeyPair Maybe
+
+    bio Textarea Maybe
+
+    company Text
+    homepage Text Maybe
+    telephone Text Maybe
+
+    automatic Bool default=false -- was this an automatically generated profile, that the user should be prompted to update?
+
+    disqus Disqus Maybe
+
+    projectTemplatesHandle Text Maybe -- user handle for account holding the project templates
+
+    UniqueProfile user
+    UniqueNormalizedHandle normalizedHandle
+    deriving Show Generic
+Tutorial
+    author UserId
+    title Title
+    desc Textarea
+    content TutorialContent
+    concurrentToken TutorialConcurrentToken
+    public SHAPair Maybe MigrationOnly -- legacy: replaced by PublishedTutorial
+    isDirty Bool
+    skill SkillLevel Maybe
+    previewCode PreviewCode Maybe
+    environment GhcEnvId' Maybe
+    deriving Show Generic
+
+PublishedTutorial
+    tutorial TutorialId
+    author UserId
+    sha BlobSHA
+    title Title
+    desc Textarea
+    content TutorialContent
+    environment GhcEnvId' Maybe
+    timestamp UTCTime
+
+    UniquePublishedTutorial tutorial
+    deriving Show Generic
+
+FrozenCache -- legacy: replaced by PublishedTutorial
+    blob BlobSHA
+    title Text
+    desc Text
+    content Text
+
+    UniqueFrozenCache blob
+    deriving Show Generic
+
+Tgroup
+    author UserId
+    title Title
+    desc Textarea
+    concurrentToken TutorialConcurrentToken SafeToRemove
+    updated UTCTime
+    deriving Show Generic
+
++Holder
+    topLevel UserId
+    group TgroupId
+
+    UniqueHolderTopLevel topLevel
+    UniqueHolderGroup group
+    deriving Show Generic
+
++Tcontent
+    tutorial TutorialId
+    group TgroupId
+    project Int
+
+    UniqueContentTutorial tutorial
+    UniqueContentGroup group
+    UniqueContentProject project
+    deriving Show Generic
+
+ContentLike
+    content TcontentId
+    user UserId
+    timestamp UTCTime
+
+    UniqueContentLike content user
+    deriving Show Generic
+
+Tmember
+    content TcontentId
+    holder HolderId
+    slug TutorialName
+    slugUserGen Bool
+    priority Int
+    -- image Text Maybe
+
+    UniqueMember holder slug
+    deriving Show Generic Eq
+
+RecentTutorial
+    tutorial TutorialId
+    published UTCTime
+    title Title -- for caching purposes only
+    desc Textarea -- for caching purposes only
+
+    UniqueRecentTutorial tutorial
+    deriving Show Generic
+
+ContentLocation
+    location Text
+    content TcontentId
+
+    UniqueContentLocation location
+    deriving Show Generic
+
+AdminAction
+    user Int
+    email Text Maybe
+    timestamp UTCTime
+    desc Text
+    deriving Show Generic
+
+UserDeletion
+    user UserId
+    created UTCTime default=now()
+    token DeletionToken
+    UniqueUserDeletion user
+
+-- These are just here in order to be able to cascade delete ServerSession
+Icontainer -- isolation container
+    session ServerSessionId
+    serverInfo Text MigrationOnly -- NOTE: used to be "ServerInfo", so marked as
+                                  -- this type is not in SoH
+    backendId Text
+    approot Text Maybe MigrationOnly
+    errorCount Int default=0
+    UniqueContainer session
+    deriving Show Generic Read
+
+GettingContainer
+    session ServerSessionId
+    when UTCTime
+    thread Text

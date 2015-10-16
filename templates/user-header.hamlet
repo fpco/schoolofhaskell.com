@@ -1,0 +1,16 @@
+<div .media .user-header>
+    $if not schoolHome
+        <img .pull-left .gravatar src=#{userGravatar 90 user}>
+    $else
+        <span .pull-left .gravatar .empty-gravatar>
+    <div .media-body>
+        <h3 itemprop=name>#{pageTitle}
+        $if isCurrentUser
+          <div .btn-group>
+            <a href=@{NewTutorialR allNames} .btn .btn-primary .new-tutorial><i></i>New Tutorial
+            <a href=@{NewGroupR allNames} .btn .new-group><i></i>New Group
+            $if profileHandle profile == UserHandle "school"
+                <a href=@{ImportContentR allNames} .btn .import-other-content><i></i>Import other content
+            <a href=@{ArrangeR allNames} .btn><i></i>Arrange
+            $maybe editGroup <- meditGroup
+                <a href=@{editGroup} .btn .edit-group><i></i>Edit group

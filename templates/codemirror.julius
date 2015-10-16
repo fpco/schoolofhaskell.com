@@ -1,0 +1,2 @@
+window.fpco = window.fpco || {};
+window.fpco.keyMap = #{toJSON keyMap};

@@ -1,0 +1,19 @@
+#users {
+    padding: 0;
+    margin: 0;
+
+    li {
+        list-style: none;
+        display: inline-block;
+        width: 140px;
+        text-align: center;
+        vertical-align: top;
+        max-height: 180px;
+        overflow: hidden;
+
+        img, i {
+            display: block;
+            margin: 0 auto;
+        }
+    }
+}

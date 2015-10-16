@@ -1,0 +1,24 @@
+<div ##{disqusSettings}>
+    <p>
+        You can enable and control comments on your public tutorials.
+        Comments are managed by
+        <a href=http://disqus.com>Disqus#
+        \.
+    <p>
+        <label for=#{radio1}>
+            <input ##{radio1} type=radio name=#{radioName} value=default :isNothing curr:checked>
+            Use site default (currently: no comments)
+    <p>
+        <label for=#{radio2}>
+            <input ##{radio2} type=radio name=#{radioName} value=nocomments :(==) curr (Just NoComments):checked>
+            Disable comments
+    <p>
+        <label for=#{radio3}>
+            <input ##{radio3} type=radio name=#{radioName} value=fpaccount :(==) curr (Just FPAccount):checked>
+            Use FP Complete's Disqus account
+    <p>
+        <label for=#{radio4}>
+            <input ##{radio4} type=radio name=#{radioName} value=useraccount :isUserAccount:checked>
+            Use your own Disqus account
+        <label for=#{textName}>Disqus account ID:
+        <input :not isUserAccount:disabled type=text ##{textName} name=#{textName} value=#{userAccount}>

@@ -1,0 +1,13 @@
+<div .row itemprop=desc>
+  <div .span4 .tutorial-nav>
+    <div .related-content>
+      ^{relatedContent}
+      #{sidebar}
+    <div .aside>
+      $maybe aside <- maside
+          ^{aside}
+  <div .span8 .tutorial-body data-environment=#{maybe "def" unGhcEnvId $ Import.tutorialEnvironment tutorial}>
+    #{header}
+    ^{body}
+    ^{disqusWidget profile}
+    #{footer}

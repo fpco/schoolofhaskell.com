@@ -1,0 +1,31 @@
+form#inner {
+    input {
+      width: 600px;
+      margin-top: 8px;
+      height: 22px;
+    }
+}
+
+.content {
+  padding-top:0;
+}
+
+.gsc-control-cse {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.gsc-result-info {
+  padding: 0 !important;
+}
+.gsc-table-result, .gsc-thumbnail-inside, .gsc-url-top {
+  padding-left: 0 !important;
+}
+.gsc-webResult {
+  padding-left: 0 !important;
+}
+.gs-webResult .gs-snippet {
+  background: inherit !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+}

@@ -1,0 +1,4 @@
+<li>
+  <a href=@{HomeR}>School
+<li>
+  <a href=@{UsersR}>Users

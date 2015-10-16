@@ -1,0 +1,19 @@
+      <ul .nav .nav-tabs .nav-stacked>
+          <li>
+              <script>reddit_target='fpcomplete'
+              <script src="https://redditstatic.s3.amazonaws.com/button/button1.js">
+          $forall (url, title') <- related
+              <li>
+                  <a href=@{url}>#{title'}
+          $maybe TutPrevNext {..} <- mprev
+              <li>
+                  <a href=@{mkLink tpnSlug}>Previous content: #{tpnTitle}
+          $maybe TutPrevNext {..} <- mnext
+              <li>
+                  <a href=@{mkLink tpnSlug}>Next content: #{tpnTitle}
+          $maybe (groupLink, groupTitle) <- mgroup
+              <li>
+                  <a href=@?{groupLink}>Go up to: #{groupTitle}
+          $if (/=) (profileHandle author) (UserHandle "school")
+              <li>
+                  <a href=@{UserR $ profileHandle author}>See all content by #{prettyProfile author}

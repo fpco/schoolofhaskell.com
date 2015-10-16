@@ -1,0 +1,10 @@
+footer nav .menu 
+	{ padding: 18px 0 0 0; }
+footer nav .menu li
+	{ display: inline; }
+footer div.copyright p
+	{ display: inline; }
+footer div.copyright ul 
+	{ display: inline; }
+footer div.copyright ul li
+	{ display: inline; }

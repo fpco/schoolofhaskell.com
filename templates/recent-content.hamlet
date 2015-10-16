@@ -1,0 +1,23 @@
+<h1>#{title}
+
+$if not $ pages == 1
+  <p>
+      Page #{page} of #{pages}
+      $maybe prev <- mprev
+          \ |
+          <a href=@?{prev}>Previous
+      $maybe next <- mnext
+          \ |
+          <a href=@?{next}>Next
+
+^{groupContents}
+
+$if not $ pages == 1
+  <p>
+      Page #{page} of #{pages}
+      $maybe prev <- mprev
+          \ |
+          <a href=@?{prev}>Previous
+      $maybe next <- mnext
+          \ |
+          <a href=@?{next}>Next

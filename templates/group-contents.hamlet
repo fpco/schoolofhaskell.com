@@ -1,0 +1,53 @@
+<div .row .group-contents>
+  <div .span4>
+    $maybe nav <- maside
+      ^{nav}
+  <div .span8>
+    $if null contents
+      #{tutHeader}
+      $maybe w <- maybeNoContent
+        ^{w}
+      $nothing
+        <p>No published content available.
+      #{tutFooter}
+    $else
+      <ul .media-list>
+        #{tutHeader}
+        $forall hc <- contents
+           <li .media>
+             $if displayGravatars
+                 <a .pull-left>
+                     <img .gravatar src=#{userGravatar 200 $ hcUser hc} alt=#{prettyProfile $ hcProfile hc}>
+             <div .media-body>
+               <h4 .media-heading>
+                   <span .muted .content-type-icon>
+                     $if hcType hc == MTGroup
+                         <i .icon-folder-open>
+                     $if hcType hc == MTTutorial
+                         <i .icon-file-text-alt>
+                   <a href=@?{hcURL hc}>
+                     #{limitLen 100 $ limitByWords 20 $ unTitle $ hcTitle hc}
+                   $if not $ hcPublic hc
+                       <i .icon-lock>
+                   <small>
+                     $maybe d <- hcWhen hc
+                       #{prettyDay d}
+                     $if not $ Just (profileUser (hcProfile hc)) == fmap profileUser mprofile
+                         <a .author-name href=@{UserR $ profileHandle $ hcProfile hc}>#{prettyProfile $ hcProfile hc}
+                     $else
+                       $if fmap profileHandle mprofile == Just (UserHandle "school")
+                           <a .author-name>#{prettyProfile $ hcProfile hc}
+                           $if isCurrentUser
+                     $maybe url <- hcForeignDeleteURL hc
+                       $if isCurrentUser
+                         <form method=post action=@?{url} style=display:inline-block>
+                            <input type=submit value="Remove foreign content">
+               <div .media-content>
+                 $if null $ unTextarea $ hcDesc hc
+                     <p .muted>No description given.
+                 $else
+                     <div .limit-me data-limit-lines="2" data-limit-more="true">
+                       <div .limit-measure>
+                       <span .limit-text>
+                         #{unTextarea $ hcDesc hc}
+        #{tutFooter}

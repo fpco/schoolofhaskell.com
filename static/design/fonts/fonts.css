@@ -1,0 +1,44 @@
+	
+	@font-face {
+	    font-family: 'Helvetica Light';
+	    src: url('/static/design/fonts/helveticaneueltstd-lt-webfont.eot');
+	    src: url('/static/design/fonts/helveticaneueltstd-lt-webfont.eot?#iefix') format('embedded-opentype'),
+	         url('/static/design/fonts/helveticaneueltstd-lt-webfont.woff') format('woff'),
+	         url('/static/design/fonts/helveticaneueltstd-lt-webfont.ttf') format('truetype'),
+	         url('/static/design/fonts/helveticaneueltstd-lt-webfont.svg#HelveticaNeueLTStd45Light') format('svg');
+	    font-weight: normal;
+	    font-style: normal;
+	}
+	
+	@font-face {
+	    font-family: 'Helvetica Bold';
+	    src: url('/static/design/fonts/helveticaneueltstd-bd-webfont.eot');
+	    src: url('/static/design/fonts/helveticaneueltstd-bd-webfont.eot?#iefix') format('embedded-opentype'),
+	         url('/static/design/fonts/helveticaneueltstd-bd-webfont.woff') format('woff'),
+	         url('/static/design/fonts/helveticaneueltstd-bd-webfont.ttf') format('truetype'),
+	         url('/static/design/fonts/helveticaneueltstd-bd-webfont.svg#HelveticaNeueLTStd75Bold') format('svg');
+	    font-weight: normal;
+	    font-style: normal;
+	}
+	
+	@font-face {
+	    font-family: 'Helvetica Roman';
+	    src: url('/static/design/fonts/helveticaneueltpro-roman.eot');
+	    src: url('/static/design/fonts/helveticaneueltpro-roman.eot?#iefix') format('embedded-opentype'),
+	         url('/static/design/fonts/helveticaneueltpro-roman.woff') format('woff'),
+	         url('/static/design/fonts/helveticaneueltpro-roman.ttf') format('truetype'),
+	         url('/static/design/fonts/helveticaneueltpro-roman.svg#helveticaneuelt_pro_55_romaRg') format('svg');
+	    font-weight: normal;
+	    font-style: normal;
+	}
+	
+	@font-face {
+	    font-family: 'Helvetica Thin';
+	    src: url('/static/design/fonts/helveticaneue-thin-webfont.eot');
+	    src: url('/static/design/fonts/helveticaneue-thin-webfont.eot?#iefix') format('embedded-opentype'),
+	         url('/static/design/fonts/helveticaneue-thin-webfont.woff') format('woff'),
+	         url('/static/design/fonts/helveticaneue-thin-webfont.ttf') format('truetype'),
+	         url('/static/design/fonts/helveticaneue-thin-webfont.svg#helvetica_35_thinregular') format('svg');
+	    font-weight: normal;
+	    font-style: normal;
+	}

@@ -1,0 +1,29 @@
+<dl>
+    $case siInstanceId
+        $of Nothing
+        $of Just instanceId
+            <dt>EC2 instance ID
+            <dd>
+                <p>#{instanceId}
+    $case siStack
+        $of Nothing
+        $of Just stack
+            <dt>CloudFormation stack
+            <dd>
+                <p>#{stack}
+    $if not (null siAsgs)
+        <dt>Auto-scaling groups
+        <dd>
+            <ul>
+                $forall sia <- siAsgs
+                    <li>
+                        #{siaName sia}
+                        $if not (null (siaInstances sia))
+                            <dl style="font-size:smaller">
+                                <dt>Instances (#{length (siaInstances sia)})
+                                <dd>
+                                    <ul>
+                                        $forall sii <- (siaInstances sia)
+                                            <li>
+                                                #{siiInstanceId sii}
+                                                (#{siiZone sii}, #{siiDnsName sii}, #{siiPrivateIp sii})

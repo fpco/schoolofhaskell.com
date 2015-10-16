@@ -1,0 +1,13 @@
+$(function(){
+  var updateTabs = function() {
+    var tab = $('[href="' + location.hash + '"]');
+    if (tab.length > 0) {
+      $(".active").removeClass("active");
+      tab.parent().addClass("active");
+      var contents = $("#tab-" + location.hash.substring(1));
+      contents.addClass("active");
+    }
+  };
+  updateTabs();
+  window.onhashchange = updateTabs;
+});

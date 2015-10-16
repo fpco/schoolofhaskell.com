@@ -1,0 +1,82 @@
+/static StaticR Static getStatic
+/auth   AuthR   Auth   getAuth
+
+/favicon.ico FaviconR GET
+/robots.txt RobotsR GET
+
+-- List and view tutorials
+
+/ HomeR GET
+-- FIXME /school HomeR GET
+/school/#TutorialName/*TutorialNames SchoolTutorialR GET
+/user UsersR GET
+/user/#UserHandle UserR GET
+/user/#UserHandle/#TutorialName/*TutorialNames UserTutorialR GET
+/user-feed/#UserHandle UserFeedR GET
+/content-proxy ContentProxyR GET
+/recent-content RecentContentR GET
+/recent-content/feed RecentContentFeedR GET
+/recent-content/feed/#RecentTutorialId RecentContentFeedEntryR GET
+/sitemap.xml SitemapR GET
+/tutorial-raw/#UserId/#BlobSHA TutorialRawR GET
+/like-content/#TcontentId LikeContentR GET POST
+/search SearchR GET
+
+-- Media upload / serving
+
+/media/#Blob.MediaUUIDType MediaR GET
+-- NOTE: This is hardcoded in static/js/fpco-codemirror.js
+/media MediaUploadR GET POST
+
+-- Edit tutorials
+
+/tutorial-preview/#TutorialId TutorialPreviewR GET
+/tutorial-preview/#TutorialId/#PreviewCode TutorialPreviewCodeR GET
+/tutorial-preview/#TutorialId/#PreviewCode/reset TutorialPreviewCodeResetR POST
+/tutorial-edit/#TutorialName/*TutorialNames EditTutorialR GET POST
+/tutorial-publish/#TutorialName/*TutorialNames PublishTutorialR POST
+/tutorial-unpublish/#TutorialName/*TutorialNames UnpublishTutorialR POST
+/tutorial-save/#TutorialName/*TutorialNames SaveTutorialR POST
+/tutorial-save-id/#TutorialId SaveTutorialIdR POST
+/tutorial/#TutorialId/skill SetSkillLevelR POST
+
+-- Manage tutorials
+
+/content DashboardR GET
+/arrange/*TutorialNames ArrangeR GET POST
+/new-group/*TutorialNames NewGroupR GET POST
+/new-tutorial/*TutorialNames NewTutorialR GET POST
+/edit-group/#TutorialName/*TutorialNames EditGroupR GET POST
+/delete-content/#TutorialName/*TutorialNames DeleteMemberR POST
+/import-content/*TutorialNames ImportContentR GET POST
+/export-all-tutorials ExportAllTutorialsR GET
+
+-- Manage accounts
+
+/account ProfileR GET PUT
+/account/add-email AddEmailR POST
+/account/confirm-email/#ConfirmEmailId/#Text ConfirmEmailR GET
+/account/primary-email/#IdentId MakePrimaryEmailR POST
+/account/email/#IdentId DeleteEmailR DELETE
+-- /account/delete DeleteAccountR GET
+-- /account/confirm-delete/#DeletionToken ConfirmDeleteAccountR GET POST
+/account/new-ssh-key NewSshKeyR POST
+/verify-email/#UserId/#Text VerifyEmailR GET
+/auth-info AuthInfoR GET
+/reset-security-token ResetSecurityTokenR POST
+
+-- Admin
+
+/admin AdminR GET !admin
+/admin/actions AdminActionsR GET !admin
+/admin/impersonate ImpersonateUserR POST !admin
+/admin/login-analytics AdminLoginAnalyticsR GET !admin
+/admin/system AdminSystemR GET !admin
+/admin/user-list AdminUserListR GET !admin
+/admin/verification-url AdminVerificationUrlR GET !admin
+
+-- Misc
+
+/build-version BuildVersionR GET
+/github GithubR GET DELETE
+/github/callback/#Text GithubCallbackR GET

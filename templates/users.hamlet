@@ -1,0 +1,13 @@
+<h1>Users with published content
+
+<ul #users>
+    $forall Entity _ ui <- users
+        <li>
+            <a href=@{UserR $ userSummaryHandle ui}>
+                <img src=#{userSummaryGravatar ui} alt=#{userSummaryDisplay ui}>
+                #{userSummaryDisplay ui}
+                <i>
+                    $if userSummaryTutcount ui == 1
+                        1 tutorial
+                    $else
+                        #{userSummaryTutcount ui} tutorials

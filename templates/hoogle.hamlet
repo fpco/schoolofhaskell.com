@@ -1,0 +1,50 @@
+<h1>Hoogle Documentation Search
+<div .haddocks>
+    View haddocks
+    <ul>
+        $forall env <- map snd envs
+            <li>
+                <a href=#{ghcEnvHaddocks env}>#{ghcEnvTitle env}
+<form>
+    <input type=search autofocus name=q value=#{q} placeholder="Hoogle Search Phrase" .search>
+    <select #env name=env>
+        $forall (id', env) <- envs
+            <option :isCurrentEnv id':selected value=#{unGhcEnvId id'}>#{ghcEnvTitle env}
+    <input .btn type="submit" value="Search">
+    <label .checkbox .exact-lookup for=exact title="Only find identifiers matching your search term precisely">
+        <input type=checkbox name=exact :exact:checked #exact>
+        Exact lookup
+
+$case mresults
+    $of FayHoogleBadQuery _err
+    $of FayHoogleResults query results mtotalCount
+        <p>Searched for: #{preEscapedToHtml query}
+        $if null results
+            <p>Your search produced no results.
+        $else
+            <ol .search-results>
+                $forall HoogleResult url sources self docs <- results
+                    <li>
+                        <p .self>
+                            <a href=#{url}>#{preEscapedToHtml self}
+                        <table .sources>
+                            $forall (pkg, modus) <- sources
+                                <tr>
+                                    <th>
+                                        <a href=#{plURL pkg}>#{plName pkg}
+                                    <td>
+                                        $forall ModuleLink name url' <- modus
+                                            <a href=#{url'}>#{name}
+                        $if null docs
+                            <p .nodocs>No documentation available.
+                        $else
+                            <p .docs>#{docs}
+            <p .pagination>
+                $with mpageCount <- fmap getPageCount mtotalCount
+                    Page #{page} of #{maybe "many" show mpageCount} #
+                    $if page > 1
+                        |
+                        <a href=@?{pageLink $ page - 1}>Previous
+                    $if maybe True ((<) page) mpageCount
+                        |
+                        <a href=@?{pageLink $ page + 1}>Next

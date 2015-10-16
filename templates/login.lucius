@@ -1,0 +1,168 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* Allows the jumbotron to be full width. */
+
+body > .container {
+  width: 100%;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* Don't bother showing the login link in the nav on this page. */
+
+ul.nav.pull-right {
+  display: none;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* The jumbotron. */
+
+.jumbotron {
+  position: relative;
+  padding: 80px 0 80px 0;
+  color: #fff;
+  text-align: center;
+  text-shadow: 0 1px 3px rgba(0,0,0,.4), 0 0 30px rgba(0,0,0,.075);
+  background: rgb(41,56,69);
+  background: -moz-linear-gradient(left, rgba(41,56,69,1) 0%, rgba(78,98,114,1) 100%);
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(41,56,69,1)), color-stop(100%,rgba(78,98,114,1)));
+  background: -webkit-linear-gradient(left, rgba(41,56,69,1) 0%,rgba(78,98,114,1) 100%);
+  background: -o-linear-gradient(left, rgba(41,56,69,1) 0%,rgba(78,98,114,1) 100%);
+  background: -ms-linear-gradient(left, rgba(41,56,69,1) 0%,rgba(78,98,114,1) 100%);
+  background: linear-gradient(to right, rgba(41,56,69,1) 0%,rgba(78,98,114,1) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#293845', endColorstr='#4e6272',GradientType=1 );
+  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+
+  .note {
+    margin-top: 2em;
+    margin-bottom: -2em;
+    font-family: actor;
+    color: #aaa;
+    font-style: italic;
+  }
+
+  .tagline {
+    line-height: 1.5em;
+    color: #ddd;
+  }
+
+  h1 {
+    color: #fff;
+    font-size: 70px;
+    font-weight: bold;
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+
+  h1,h2,h3 {
+    margin-top: 0;
+  }
+
+  p {
+    font-size: 20px;
+    font-weight: 300;
+    line-height: 1.25;
+    margin-bottom: 30px;
+  }
+
+  .action-item {
+    td {
+      vertical-align: top;
+    }
+    .login-side {
+      width: 23em;
+      text-align: left;
+    }
+    .intro-side {
+      width: auto;
+      text-align: left;
+      text-align: justify;
+
+      h1 {
+        text-align: left;
+      }
+    }
+    .login-option {
+      font-size: 30px;
+      padding: 20px 0;
+      a {
+
+      }
+    }
+  }
+
+  /* Link styles (used on .masthead-links as well) */
+  a {
+    color: #fff;
+
+    -webkit-transition: all .2s ease-in-out;
+    -moz-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+  }
+  a:hover {
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255,255,255,.25);
+    text-decoration: none;
+  }
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* The alt login bar. */
+
+.alt-login {
+  padding: 1em 0 0 0;
+  .row {
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 1em;
+  }
+  .register-form {
+    text-align: right
+  }
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* The “Why use” container. */
+
+.why {
+  text-align: center; font-family: actor;
+  h1 {
+    font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+    text-align: center;
+    font-size: 40px;
+    margin-top: 1.5em;
+  }
+  h3 {
+    font-size: 24.5px;
+    font-family: actor;
+    margin-bottom: 3em;
+  }
+  .sub-tagline {
+    color: #444;
+    font-weight: normal;
+  }
+  .reasons {
+    text-align: left;
+    line-height: 1.5em;
+  }
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* Login options */
+
+.icon-google-plus { color: #dd4b39; }
+.icon-user { color: #0096dd; }
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* Responsive layout */
+
+@media (max-width: 979px) and (min-width: 768px) {
+  .alt-login {
+    input[name=email] {
+      display: block;
+      margin-top: 1em;
+      margin-bottom: 0.5em;
+    }
+    small {
+      display: block;
+      margin-top: 1em;
+    }
+  }
+}

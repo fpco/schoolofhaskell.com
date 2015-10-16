@@ -1,0 +1,122 @@
+textarea {
+  height: 10em;
+  width: 30em;
+}
+
+.profile {
+  input {
+    width: 30em;
+  }
+  input[type=submit] {
+    width: auto;
+  }
+}
+
+.update-profile {
+  margin-bottom: 0px;
+  margin-top: 20px;
+}
+
+.tarball-label {
+  display: inline;
+  cursor: default;
+}
+
+.emails {
+  li {
+    input,form {
+      display: inline-block;
+    }
+  }
+}
+
+#team {
+  select {
+    margin: 0;
+  }
+  tr {
+    border-bottom: solid 1px #ccc;
+  }
+  tr:nth-last-child(1) {
+    border-bottom: none;
+  }
+  td {
+    padding-right: 1em;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+  }
+  h2 {
+    margin-top: 1em;
+    margin-bottom: 1em;
+  }
+  li {
+    margin: 1em;
+  }
+  form {
+    display: inline-block;
+    margin: 0;
+  }
+  .user-cur {
+    position: relative;
+    top: -0.25em;
+    margin-right: 0.5em;
+  }
+  .minigravatar {
+    height: 2em;
+    width: 2em;
+    margin: 0 0.5em;
+  }
+}
+
+#products {
+  padding-bottom: 3em;
+}
+
+.tab-content {
+  overflow: visible !important;
+}
+
+.license-agreement-link {
+    font-size: 80%;
+    font-style: italic;
+    color: #333;
+}
+
+.team-table {
+    border-collapse: collapse;
+
+    td {
+        border: 1px solid #333;
+        padding: 0.5em;
+        vertical-align: top;
+    }
+
+    .license {
+        .desc {
+            display: block;
+            font-weight: bold;
+        }
+
+        .index {
+            /*
+            font-style: italic;
+            display: block;
+            text-align: center;
+            */
+            display: none;
+        }
+    }
+
+    .assign .user-cur {
+        display: block;
+    }
+
+    form {
+        margin: 0;
+    }
+
+    .unassigned {
+        font-style: italic;
+        display: block;
+    }
+}

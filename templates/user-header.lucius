@@ -1,0 +1,14 @@
+.user-header {
+  margin-bottom: 1.5em;
+  position: relative;
+
+  h3 {
+    color: #444;
+    margin: 0;
+    font-size: 30px;
+  }
+  .btn-group {
+    position: absolute;
+    bottom: 0;
+  }
+}

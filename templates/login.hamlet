@@ -1,0 +1,39 @@
+<div .jumbotron .masthead>
+  <div .container>
+    <table .action-item>
+      <tbody>
+        <tr>
+          <td .login-side>
+            <h2>Login
+            <div .login-option>
+              <a .google .btn-old .btnd href="/auth/page/googleemail2/forward">
+                <i .icon-google-plus>
+                Google+
+            <div .login-option>
+              <a .persona .btn-old .btna href="javascript:hident3()">
+                <i .icon-user>
+                Persona
+            <div .note> (Automatically creates account)
+          <td .intro-side>
+            <h1>The School of Haskell
+$#              <p .tagline>
+$#                <blockquote>I've learned more about Haskell by using FP Haskell Center in the last two weeks than I have in all these years.
+$#                <cite>Alain O’Dea
+$#                <cite>Software Developer, Verafin
+
+<div .container .alt-login>
+  <div .row>
+    <div .span8>
+      <form .form-inline method="post" action="/auth/page/email/login">
+        <input .input .login-username type="text" name="email" placeholder="Email/username" autofocus>
+        <div .input-append>
+          <input .input .login-password type="password" placeholder="Password" name="password">
+          <button .btn .btn-inverse .login-button type="submit">Login
+        <small>
+          <a href="/auth/page/email/forgot-password">
+            Forgot your password?
+    <div .span4 .register-form>
+      <form .form-inline .registration-form method="post" action="/auth/page/email/register">
+        <div .input-append>
+          <input .registration-email .input type="email" placeholder="Email address" name="email">
+          <button .btn>Register

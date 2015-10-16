@@ -1,0 +1,3 @@
+buckets:
+    fpco-data:
+        fs-path: "filestore/"

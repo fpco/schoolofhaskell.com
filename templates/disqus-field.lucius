@@ -1,0 +1,3 @@
+##{disqusSettings} > p > label > input {
+    width: auto;
+}

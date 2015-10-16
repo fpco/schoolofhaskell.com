@@ -1,0 +1,5 @@
+<p>
+    Note that this will <b>permanently</b> delete all of your tutorials and
+    projects.  Consider pushing your projects to a remote git repository.  You
+    can also download a tarball of all your tutorials by clicking
+    <a href=@{ExportAllTutorialsR}>this link</a>.

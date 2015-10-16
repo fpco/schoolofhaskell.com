@@ -1,0 +1,86 @@
+<div .navbar .navbar-inverse .navbar-static-top>
+  <div .navbar-inner>
+    <div .container>
+       <a .btn .btn-navbar type="button" data-toggle="collapse" data-target=".nav-collapse">
+         <span .icon-bar>
+         <span .icon-bar>
+         <span .icon-bar>
+       <a .brand href="/">
+         <img src="/static/img/ide-logo.png"
+              title="FP Complete">
+       <div .nav-collapse .collapse>
+         <ul .nav>
+           ^{navbar}
+         <form class="navbar-search pull-left" action=@{SearchR}>
+           <input type="text" class="search-query" placeholder="Search" name="search">
+         <ul .nav .pull-right>
+           $maybe Entity _ a <- ma
+               <li>
+                 $maybe Entity _ profile <- mp
+                    <a href=@{UserR (profileHandle profile)}>
+                       <span .icon-user>
+                       #{unUserHandle $ profileHandle profile}
+                 $nothing
+                    #{userEmail a}
+               <li>
+                 <a href=@{ProfileR} .icon-wrench title="Account Settings">
+               <li>
+                   <a href=@{AuthR LogoutR} .logout-link>Logout
+           $nothing
+               <li>
+                   <a href=@{AuthR LoginR}>Login
+
+$if not $ null breadcrumbs'
+  <div .container .breadcrumb-container>
+    <div .row>
+      <div .span12>
+        <ul .breadcrumb>
+          $forall (i,(link, title)) <- breadcrumbs'
+            <li>
+              <a href=@?{link}>#{title}
+              $if not $ i == length breadcrumbs'
+                <span .divider>/
+
+<div .container .main-content>
+    $maybe msg <- mmsg
+      <div .alert .alert-block>
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        #{msg}
+    $maybe Entity _ profile <- mp
+        $if profileAutomatic profile
+            <div .alert .alert-block>
+                You have not yet
+                <a href=@{ProfileR}>selected a username#
+                .
+    $maybe Entity _ a <- ma
+        $if (&&) (userNeedsNewPassword a) (not needOldPassword')
+            <div .alert .alert-block>
+                You need to
+                <a href=@{ProfileR}#change-password>change your password#
+                .
+    $maybe top <- mtop
+      ^{top}
+  ^{widget}
+
+<div .footer>
+  <div .container>
+    <div .row>
+      <div .span12>
+         <ul .menu>
+           ^{navbar}
+           $maybe _ <- monclick
+               <li>
+                   <a href=@{AuthR LoginR}>
+                       Log In
+               <li>
+                   <a href=@{AuthR Yesod.Auth.Email.registerR}>
+                       Sign Up
+           $nothing
+               <li>
+                   <a .logout href=@{AuthR LogoutR}>Logout
+    <div .row>
+      <div .span12>
+        $maybe footer <- mfooter
+          ^{footer}
+
+<link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap-responsive.css"/>

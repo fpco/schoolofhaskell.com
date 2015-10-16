@@ -1,0 +1,53 @@
+/*******************************************************************************
+ * Limiting of text.
+ */
+$(document).ready(function(){
+  // Number of characters to jump by when resizing.
+  var jumpSize = 15;
+  $('.limit-me').each(function(){
+    var $this = $(this);
+    var visibility = $this.css('visibility');
+    var lines = parseInt($this.attr('data-limit-lines'));
+    if(lines){
+      // Measure the height of a line in this element.
+      var measure = $this.find('.limit-measure');
+      measure.text('m');
+      var lineHeight = measure.height();
+      measure.remove();
+      // If the height is fine, just skip this element.
+      if($this.height() <= lineHeight * lines)
+        return true;
+      // Strip characters off the text until it fits the right number
+      // of lines.
+      $this.css('visibility','hidden');
+      var text = $this.find('.limit-text');
+      var orig = text.text().replace(/[\n]+/,' ');
+      var t = text.get(0);
+      var limited = false;
+      text.append('…');
+      // If -more option was specified, add the "more" expander/shrinker.
+      var more = $this.attr('data-limit-more') === "true";
+      if(more) {
+        var a = $('<a href="#">more</a>');
+        $this.append(a);
+        // Defer for speed
+        setTimeout(function(){
+          a.toggle(function(){
+            text.text(orig);
+            a.text('less');
+          },function(){
+            text.text(chars);
+            a.text('more');
+          });
+        });
+      }
+      for (var chars = orig;
+           $this.height() > lineHeight * lines;
+           chars = chars.substring(0,chars.length - (1 + jumpSize)) + '…',
+           // This is an optimization of and equivalent to: text.text()
+           t.textContent = chars,
+           t.innerText = chars);
+      $this.css('visibility',visibility);
+    }
+  });
+});

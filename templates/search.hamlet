@@ -1,0 +1,6 @@
+<h1>Search results for “#{search}”
+<form #inner action=@{SearchR}>
+    <input type=search name=search value=#{search}>
+    <input type=submit value="Search">
+<div>
+    <gcse:searchresults-only queryParameterName=search>

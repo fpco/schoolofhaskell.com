@@ -1,0 +1,20 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* Social / metadata area */
+
+.social { margin-right: 1em; }
+h1 {
+  font-family: Merriweather !important;
+}
+article  {
+  font-family: Merriweather !important;
+  li {
+    font-family: Merriweather !important;
+    line-height: 1.6em;
+  }
+}
+h1,h2,h3,h4,h4,h5 {
+  font-family: Merriweather !important;
+}
+.editor p {
+  font-family: Frutiger, "Frutiger Linotype", Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro", Myriad, "DejaVu Sans Condensed", "Liberation Sans", "Nimbus Sans L", Tahoma, Geneva, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}

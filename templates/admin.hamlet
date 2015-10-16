@@ -1,0 +1,41 @@
+<h1>Admin Page
+
+<h2>Statistics
+
+<p>
+    <a href=@{AdminLoginAnalyticsR}>Login analytics
+<p>
+    <a href=@{AdminUserListR}>User list (CSV)
+<p>
+    <a href=@{AdminActionsR}>Administrator actions (CSV)
+
+<dl>
+    <dt>Activated accounts
+    <dd>#{activated}
+    <dt>Total tutorials
+    <dd>#{totalTutorials}
+    <dt>Published tutorials
+    <dd>#{publishedTutorials}
+
+<h2>System
+<p>
+    <a href=@{AdminSystemR}>System information
+
+<h2>Verification URLs
+
+<form action=@{AdminVerificationUrlR}>
+    Email address:
+    <input type=email name=email>
+    <input type=submit value="Get verification URL">
+
+<h2>Impersonate user
+<p .text-warning>
+    Warning! With great power comes great responsibility.
+    You <b>must</b> confirm with the user in question before using this functionality.
+    Do not make any changes to the user's account without permission.
+<form method=post action=@{ImpersonateUserR}>
+    Username or email address: <input type=text name=ident>
+    <input type="submit" .btn value="Impersonate">
+<p .text-info>
+    Note that you'll be logged out of your current account,
+    and will therefore no longer be an administrator.

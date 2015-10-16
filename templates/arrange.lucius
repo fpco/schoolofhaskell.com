@@ -1,0 +1,78 @@
+/* Roughly based on https://github.com/johnny/jquery-sortable/blob/master/source/css/jquery-sortable.css.sass mixed with some styles from the dashboard */
+
+.dragged {
+  position: absolute;
+  top: 0;
+  opacity: .5;
+  z-index: 10;
+}
+
+.dragging, .dragging * {
+  cursor: url(/static/img/closedhand.cur), move !important;
+}
+
+#arrange {
+  #arrange-list {
+    padding: 0.5em 0;
+    margin: 0 0 0 5px !important;
+
+    /* So that things don't shift when placing at the top / bottom */
+    > li.placeholder:first-child, > li.placeholder:last-child {
+      margin: -1px;
+    }
+  }
+
+  ol {
+    margin: 1em;
+    margin-left: 2em;
+  }
+
+  li {
+    display: block;
+    margin: 0.5em 0;
+    background: #fff;
+    border: 1px solid #bbb;
+    -moz-border-radius: 7px;
+    -webkit-border-radius: 7px;
+    border-radius: 7px;
+    user-select: none;
+    cursor: url(/static/img/openhand.cur), move;
+  }
+
+  li > span {
+    display: block;
+    margin: 0.5em;
+    font-family: 'PT Sans', sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  li > span:before {
+    font-family: FontAwesome;
+    color: #444;
+    font-weight: normal;
+    margin-right: 0.5em;
+  }
+
+  li.arrange-group > span:before { content: "\f07c"; }
+  li.arrange-tutorial > span:before { content: "\f0f6"; }
+  li.arrange-project > span:before { content: "\f0c3"; }
+
+  li.placeholder {
+    margin: -0.325em 0;
+    position: relative;
+    border-color: #333;
+  }
+
+  li.placeholder:before {
+    position: absolute;
+    content: "";
+    width: 0;
+    height: 0;
+    margin-top: -5px;
+    left: -5px;
+    border: 5px solid transparent;
+    border-left-color: #333;
+    border-right: none;
+  }
+}

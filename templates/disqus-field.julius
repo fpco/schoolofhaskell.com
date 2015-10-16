@@ -1,0 +1,9 @@
+$(function(){
+    var radio = $("#" + #{toJSON disqusSettings} + " input[type=radio]"),
+        userButton = $("#" + #{toJSON radio4}),
+        textField = $("#" + #{toJSON textName})
+        ;
+    radio.change(function(){
+        textField.attr("disabled", !userButton.attr("checked"));
+    });
+});

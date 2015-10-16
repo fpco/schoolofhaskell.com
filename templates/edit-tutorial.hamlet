@@ -1,0 +1,48 @@
+<div #error-display>
+    <p .errors>
+    <p>Please copy your most recent content below and refresh.
+    <div #error-content>
+
+<div #editor>
+    <textarea #content data-saveurl=@{SaveTutorialIdR tid} data-concurrent=#{unTutorialConcurrentToken $ tutorialConcurrentToken tutorial}>#{unTutorialContent $ tutorialContent tutorial}
+    <div #codemirror .tutorial-editor>
+
+<div #details>
+  <div .inset>
+    <a .return-to-tutorial href=@{UserTutorialR profileHandle tn tns}>← Return to tutorial
+    <a href="/" title="Go back home">
+       <img #logo src="/static/img/ide-logo.png">
+    <h1>#{tutorialTitle tutorial}
+    <div #buttons>
+        <a .btn .btn-inverse #save>Save
+        $if isPublished
+            <form method=post action=@{PublishTutorialR tn tns}>
+                <input type="submit" .btn .btn-inverse data-title="Re-publish with the current text." value="Re-publish">
+            <form method=post action=@{UnpublishTutorialR tn tns}>
+                <input type="submit" .btn .btn-inverse data-title="Unpublish the tutorial.  This will hide it from other users." value="Unpublish">
+        $else
+            <form method=post action=@{PublishTutorialR tn tns}>
+                <input type="submit" .btn .btn-inverse data-title="Publish the tutorial.  This will make it visible to other users." value="Publish">
+        <form action=@{TutorialPreviewR tid} target=tutprev-#{toPathPiece tid}>
+            <input type="submit" .btn .btn-inverse .preview-button data-title="Preview how the tutorial looks - you can refresh the page to view an updated version." value="Preview">
+        <form method=post action=@{DeleteMemberR tn tns}>
+            <input type="submit" .btn .btn-danger .delete-tutorial-button data-title="Permanently delete this tutorial." value="Delete">
+
+        <p #status-msg>
+          <span .active>Saving…
+          <span .inactive>Saved.
+
+  <div #normal-display>
+    <div .inset>
+      <h2>Details
+      <form method=post enctype=#{enctype}>
+          <table>
+              ^{widget}
+              <tr>
+                  <td colspan=2>
+                      <input type="submit" #update-btn .btn .btn-inverse value="Update">
+
+<link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap-responsive.min.css">
+
+#{googleAnalytics "Tutorial Editor"}

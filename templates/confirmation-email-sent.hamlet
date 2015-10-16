@@ -1,0 +1,2 @@
+<h1>Confirmation email sent
+<p>A confirmation email has been sent to: <b>#{identifier}</b>

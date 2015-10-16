@@ -1,0 +1,3 @@
+[submodule "static/codemirror"]
+	path = static/codemirror
+	url = git@github.com:fpco/codemirror

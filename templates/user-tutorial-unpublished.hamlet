@@ -1,0 +1,22 @@
+<div .row>
+  <div .span12>
+    <div .alert>
+        Your tutorial has not yet been published. To do so, please
+        <a href=@{EditTutorialR tn tns}>visit the edit tutorial page#
+        . Below is a preview of your current content.
+    <h1 itemprop=name>
+      #{tutorialTitle}
+      <i .icon-lock>
+
+<div .row itemprop=desc>
+  <div .span5 .tutorial-nav>
+    <div .related-content>
+      ^{relatedContent}
+    <div .aside>
+      #{sidebar}
+      $maybe aside <- maside
+          ^{aside}
+  <div .span7 .tutorial-body data-environment=#{maybe "def" unGhcEnvId $ Import.tutorialEnvironment tutorial}>
+    #{header}
+    ^{body}
+    #{footer}

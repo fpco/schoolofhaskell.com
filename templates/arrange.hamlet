@@ -1,0 +1,8 @@
+<div .row>
+  <div .span12>
+    <h1>Arrange Content
+    <div #arrange-url data-url=@{returnRoute}>
+    <a .btn #arrange-save>Save
+    <div #arrange>
+      <ol #arrange-list>
+        ^{content}
