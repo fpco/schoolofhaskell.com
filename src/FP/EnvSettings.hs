@@ -178,9 +178,6 @@ applyUserSafeEnvironment =
      mapFromList .
      map (pack *** pack)
 
-externalPort :: Int
-externalPort = lookupReadEnvError "EXTERNAL_PORT"
-
 awsAccessKey :: ByteString
 awsAccessKey = encodeUtf8 $ lookupEnvError "AWS_ACCESS_KEY"
 
