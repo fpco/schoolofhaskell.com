@@ -28,7 +28,7 @@ revokeGithubAccess key (Entity pid p) = do
                 , token
                 ]
             let req = applyBasicAuth (githubClientId y) (githubClientSecret y) req'
-                    { requestHeaders = [("User-Agent", "FPComplete-learning-site/1.0")]
+                    { requestHeaders = [("User-Agent", "FPComplete-soh-site/1.0")]
                     }
             withResponse req $ \res -> do
                 let src = responseBody res
@@ -80,7 +80,7 @@ performGithub (GithubAccessKey token) m suffix mbody = do
     req' <- liftIO $ parseUrl $ "https://api.github.com/" ++ suffix
     let req = req'
             { requestHeaders = [ ("Authorization", "token " ++ token)
-                               , ("User-Agent", "FPComplete-learning-site/1.0") ]
+                               , ("User-Agent", "FPComplete-soh-site/1.0") ]
             , checkStatus = \_ _ _ -> Nothing
             , requestBody =
                 case mbody of

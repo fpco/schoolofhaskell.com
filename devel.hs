@@ -1,5 +1,5 @@
 {-# LANGUAGE PackageImports #-}
-import "learning-site" Application (develMain)
+import "soh-site" Application (develMain)
 
 main :: IO ()
 main = develMain

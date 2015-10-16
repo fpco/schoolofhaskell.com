@@ -266,7 +266,7 @@ devrsm _manager _email mail = liftIO $ do
     void $ rawSystem "xdg-open" ["/tmp/mail.txt"]
 
 main :: IO ()
-main = useSyslog "learning-site" $ do
+main = useSyslog "soh-site" $ do
     makeApp <-
         if deploymentType == DevDeployment
             then return makeApplicationDev
@@ -298,7 +298,7 @@ main = useSyslog "learning-site" $ do
           defaultSettings
 
 develMain :: IO ()
-develMain = useSyslog "learning-site" $ do
+develMain = useSyslog "soh-site" $ do
     putStrLn "Starting devel application"
     (port, app) <- getApplicationDev
     _ <- forkIO $ runSettings (setPort port defaultSettings) app
