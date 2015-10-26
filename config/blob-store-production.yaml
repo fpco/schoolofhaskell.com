@@ -1,0 +1,3 @@
+buckets:
+    fpco-data:
+        s3-bucket: "fpco-data-production"
