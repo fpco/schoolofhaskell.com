@@ -1,3 +1,15 @@
 resolver: lts-1.15
 extra-deps:
 - retry-0.6
+
+# CREATE DOCKER IMAGES FROM OUR APPLICATION
+image:
+  container:
+    # THE NAME OF THE BASE RUNTIME IMAGE
+    base: "fpco/ubuntu-with-libgmp:14.04"
+    # THE APPLICATION IMAGE NAME
+    name: "fpco/soh-site:2.0.0"
+    # FOLDERS TO ADD TO THE IMAGE FROM THE PROJECT
+    add:
+      config/: /config/
+      static/: /static/
