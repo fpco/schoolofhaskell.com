@@ -38,6 +38,8 @@ import Network.Wai.Logger (clockDateCacher)
 import qualified Yesod.Core.Types
 import Database.Persist.Timed.Postgresql (createPidConnectionPool)
 import System.Environment (getEnvironment)
+import Import.Migration
+import Database.Persist.Sql (migrate)
 
 -- Import all relevant handler modules here.
 -- Don't forget to add new modules to your cabal file!
@@ -183,18 +185,19 @@ makeFoundation ghid ghsecret rsm = do
             , googleOAuth = (googleOAuthClientId, googleOAuthClientSecret)
             }
 
-    -- Migrations disabled for SoH until FPHC is shut down
-
-    -- runResourceT
-    --      $ flip runLoggingT (messageLoggerSource app logger)
-    --      $ runSqlPool p
-    --      $ Redis.withMutex redisConn "fpco.learning-site.migrate.mutex" $ do
-    --             let ms = MigrationSettings
-    --             let mpDef = entityDef (Nothing :: Maybe MigrationPerformed)
-    --             runMigration $ migrate [mpDef] mpDef
-    --             performPreMigrations ms
-    --             runMigration migrateAll
-    --             performPostMigrations ms app
+    -- Migrations disabled for SoH until FPHC is shut down. Use
+    -- LEARNING_SITE_DO_MIGRATION=YES to re-enable. Particularly useful
+    -- to initialize an empty database.
+    when shouldDoMigration
+        $ runResourceT
+        $ flip runLoggingT (messageLoggerSource app logger)
+        $ runSqlPool p $ do
+            let ms = MigrationSettings
+            let mpDef = entityDef (Nothing :: Maybe MigrationPerformed)
+            runMigration $ migrate [mpDef] mpDef
+            performPreMigrations ms
+            runMigration migrateAll
+            performPostMigrations ms app
 
     let processPeriod = 300
         periodically source f = void $ forkIO $ flip runLoggingT (messageLoggerSource app logger) $ do

@@ -241,3 +241,6 @@ googleOAuthClientId = lookupEnvError "GOOGLE_OAUTH_CLIENT_ID"
 
 googleOAuthClientSecret :: Text
 googleOAuthClientSecret = lookupEnvError "GOOGLE_OAUTH_CLIENT_SECRET"
+
+shouldDoMigration :: Bool
+shouldDoMigration = maybe False ("YES" ==) (lookupEnv "LEARNING_SITE_DO_MIGRATION")
