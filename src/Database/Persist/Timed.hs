@@ -12,7 +12,6 @@ import Control.Monad.Logger
 import Control.Monad.Trans.Control
 import Data.Conduit.Pool
 import Database.Persist.Postgresql
-import Language.Haskell.TH.Syntax
 import Prelude
 import System.Posix.Types (CPid)
 

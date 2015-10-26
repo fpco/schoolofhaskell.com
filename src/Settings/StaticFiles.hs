@@ -7,10 +7,6 @@ import qualified Yesod.Static as Static
 import Settings.Development
 import Language.Haskell.TH.Syntax
 import Settings (staticDir)
-import System.IO (openTempFile)
-import System.Process (rawSystem)
-import System.Directory (removeFile)
-import System.Exit (ExitCode(..))
 
 -- | use this to create your static file serving site
 staticSite :: IO Static.Static
