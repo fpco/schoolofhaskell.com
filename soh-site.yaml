@@ -64,7 +64,7 @@ spec:
           - name: LEARNING_SITE_PORT
             value: "80"
           - name: LEARNING_SITE_APPROOT
-            value: https://www.fpcomplete.com
+            value: https://www.schoolofhaskell.com
           - name: GOOGLE_OAUTH_CLIENT_ID
             value: "219123459670-s2a0rs5tjptqol2oo3f0u27ac6it9riv.apps.googleusercontent.com"
           - name: GOOGLE_OAUTH_CLIENT_SECRET
