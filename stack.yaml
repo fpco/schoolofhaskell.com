@@ -6,7 +6,7 @@ extra-deps:
 image:
   container:
     # THE NAME OF THE BASE RUNTIME IMAGE
-    base: "fpco/ubuntu-with-libgmp:14.04"
+    base: "fpco/soh-site-base"
     # THE APPLICATION IMAGE NAME
     name: "fpco/soh-site"
     # FOLDERS TO ADD TO THE IMAGE FROM THE PROJECT
