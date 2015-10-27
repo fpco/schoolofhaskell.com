@@ -43,30 +43,36 @@ spec:
       - name: soh-site
         image: fpco/soh-site:2.0.0
         env:
+          - name: FP_ENVIRONMENT_NAME
+            value: production
           - name: FP_ENVIRONMENT_TYPE
-            value: development
+            value: production
           - name: FP_DEPLOYMENT_TYPE
-            value: development
+            value: production
           - name: BLOB_STORE_SETTINGS
-            value: /config/blob-store.yaml
+            value: /config/blob-store-production.yaml
           - name: LEARNING_SITE_PGCONNSTR
             value: dbname=learning_site host=localhost user=learning_site password=learning-site port=5432
           - name: LEARNING_SITE_PGPOOLSIZE
-            value: "7"
+            value: "100"
           - name: LEARNING_SITE_MAIL_FROM
-            value: noreply@fpcomplete.com
+            value: noreply@schoolofhaskell.com
           - name: LEARNING_SITE_ANALYTICS
             value: UA-36928035-1
           - name: LEARNING_SITE_BIND
             value: "*4"
           - name: LEARNING_SITE_PORT
-            value: "3000"
+            value: "80"
           - name: LEARNING_SITE_APPROOT
-            value: http://localhost:3000
+            value: https://www.fpcomplete.com
           - name: GOOGLE_OAUTH_CLIENT_ID
             value: "219123459670-s2a0rs5tjptqol2oo3f0u27ac6it9riv.apps.googleusercontent.com"
           - name: GOOGLE_OAUTH_CLIENT_SECRET
             value: "VPosg0Tt04Bwv8Hj-U3L6fhN"
+          - name: AWS_ACCESS_KEY
+            value: "PUT_ACCESS_KEY_HERE"
+          - name: AWS_SECRET_KEY
+            value: "PUT_SECRET_KEY_HERE"
         command:
         - soh-site
         ports:
