@@ -34,7 +34,6 @@ library
                      FP.EnvSettings
                      FP.Extra
                      FP.Logger
-                     FP.Prelude
                      FP.Store.Blob
                      Foundation
                      Handler.AddEmail
