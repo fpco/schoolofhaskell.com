@@ -8,7 +8,7 @@ image:
     # THE NAME OF THE BASE RUNTIME IMAGE
     base: "fpco/ubuntu-with-libgmp:14.04"
     # THE APPLICATION IMAGE NAME
-    name: "fpco/soh-site:2.0.0"
+    name: "fpco/soh-site"
     # FOLDERS TO ADD TO THE IMAGE FROM THE PROJECT
     add:
       config/: /config/

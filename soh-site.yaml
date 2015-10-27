@@ -41,7 +41,7 @@ spec:
           containerPort: 8080
         restartStrategy: always
       - name: soh-site
-        image: fpco/soh-site:2.0.0
+        image: fpco/soh-site:latest
         env:
           - name: FP_ENVIRONMENT_NAME
             value: production
