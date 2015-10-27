@@ -73,19 +73,3 @@ spec:
         - name: https
           containerPort: 8443
         restartStrategy: always
-        volumeMounts:
-        - name: secret
-          mountPath: /config
-      volumes:
-      - name: secret
-        secret:
-          secretName: soh-site
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: soh-site
-type: Opaque
-data:
-  blob-store.yaml: |
-    << base64 encoded file goes here >>
