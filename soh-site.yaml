@@ -48,7 +48,7 @@ spec:
           - name: FP_ENVIRONMENT_TYPE
             value: production
           - name: FP_DEPLOYMENT_TYPE
-            value: production
+            value: aws
           - name: BLOB_STORE_SETTINGS
             value: /config/blob-store-production.yaml
           - name: LEARNING_SITE_PGCONNSTR
