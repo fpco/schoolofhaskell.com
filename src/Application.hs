@@ -201,8 +201,8 @@ makeFoundation ghid ghsecret rsm = do
 
     let processPeriod = 300
         periodically source f = void $ forkIO $ flip runLoggingT (messageLoggerSource app logger) $ do
-            liftIO $ threadDelay (1000 * 1000 * processPeriod)
             handleAny ($logErrorS source . tshow) f
+            liftIO $ threadDelay (1000 * 1000 * processPeriod)
 
     periodically "PRUNING"
         $ runResourceT
