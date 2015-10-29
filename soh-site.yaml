@@ -66,9 +66,9 @@ spec:
           - name: LEARNING_SITE_APPROOT
             value: https://www.schoolofhaskell.com
           - name: GOOGLE_OAUTH_CLIENT_ID
-            value: "219123459670-s2a0rs5tjptqol2oo3f0u27ac6it9riv.apps.googleusercontent.com"
+            value: "PUT_CLIENT_ID_HERE"
           - name: GOOGLE_OAUTH_CLIENT_SECRET
-            value: "VPosg0Tt04Bwv8Hj-U3L6fhN"
+            value: "PUT_CLIENT_SECRET_HERE"
           - name: AWS_ACCESS_KEY
             value: "PUT_ACCESS_KEY_HERE"
           - name: AWS_SECRET_KEY
