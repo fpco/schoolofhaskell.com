@@ -10,7 +10,7 @@
                 <i .icon-google-plus>
                 Google+
             <div .login-option>
-              <a .persona .btn-old .btna href="javascript:hident3()">
+              <a .persona .btn-old .btna href="javascript:hident2()">
                 <i .icon-user>
                 Persona
             <div .note> (Automatically creates account)

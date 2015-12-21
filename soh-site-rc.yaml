@@ -1,24 +1,6 @@
 # Kubernetes
 ---
 apiVersion: v1
-kind: Service
-metadata:
-  name: soh-site
-  labels:
-    app: soh-site
-spec:
-  ports:
-  - name: http
-    port: 80
-    targetPort: http
-  - name: https
-    port: 443
-    targetPort: https
-  selector:
-    app: soh-site
-  type: LoadBalancer
----
-apiVersion: v1
 kind: ReplicationController
 metadata:
   name: soh-site
@@ -39,7 +21,6 @@ spec:
         ports:
         - name: http
           containerPort: 8080
-        restartStrategy: always
       - name: soh-site
         image: fpco/soh-site:latest
         env:
@@ -62,7 +43,7 @@ spec:
           - name: LEARNING_SITE_BIND
             value: "*4"
           - name: LEARNING_SITE_PORT
-            value: "80"
+            value: "8443"
           - name: LEARNING_SITE_APPROOT
             value: https://www.schoolofhaskell.com
           - name: GOOGLE_OAUTH_CLIENT_ID
@@ -78,4 +59,3 @@ spec:
         ports:
         - name: https
           containerPort: 8443
-        restartStrategy: always

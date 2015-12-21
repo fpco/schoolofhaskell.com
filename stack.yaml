@@ -2,6 +2,12 @@ resolver: lts-1.15
 extra-deps:
 - retry-0.6
 
+docker:
+  # Docker is disabled by default, but can be enabled using `stack --docker`
+  enable: false
+  # No LTS images available for lts-1.x, but this will do
+  repo: fpco/stack-build:lts-2.22
+
 # CREATE DOCKER IMAGES FROM OUR APPLICATION
 image:
   container:
