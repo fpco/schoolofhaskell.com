@@ -7,7 +7,7 @@
          <span .icon-bar>
        <a .brand href="/">
          <img src="/static/img/ide-logo.png"
-              title="FP Complete">
+              title="School of Haskell">
        <div .nav-collapse .collapse>
          <ul .nav>
            ^{navbar}

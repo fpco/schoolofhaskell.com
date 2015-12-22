@@ -131,7 +131,7 @@ getAuthMiddleware =
         Nothing -> return id
         Just (u1, p1) ->
             let check' u2 p2 = return $ u1 == u2 && p1 == p2
-             in return $ basicAuth check' "FP Complete Haskell Center"
+             in return $ basicAuth check' "School of Haskell"
 
 makeFoundation :: ByteString -- ^ github client id
                -> ByteString -- ^ github client secret
@@ -264,7 +264,7 @@ devrsm :: MonadIO m
        -> (Text -> Mail)
        -> m ()
 devrsm _manager _email mail = liftIO $ do
-    bs <- renderMail' $ mail "noreply@fpcomplete.com"
+    bs <- renderMail' $ mail "noreply@schoolofhaskell.com"
     writeFile "/tmp/mail.txt" bs
     void $ rawSystem "xdg-open" ["/tmp/mail.txt"]
 

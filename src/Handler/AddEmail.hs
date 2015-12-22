@@ -30,7 +30,7 @@ postAddEmailR = do
                     eres <- liftResourceT $ try $ appRenderSendMail y (httpManager y) email $ \from -> (emptyMail from)
                         { mailTo = [Address Nothing email]
                         , mailHeaders =
-                            [ ("Subject", "FP Haskell Center: Confirm email address")
+                            [ ("Subject", "School of Haskell: Confirm email address")
                             ]
                         , mailParts = return $ return Part
                             { partType = "text/plain; charset=utf-8"

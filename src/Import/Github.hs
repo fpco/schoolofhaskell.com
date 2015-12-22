@@ -95,7 +95,7 @@ performGithub (GithubAccessKey token) m suffix mbody = do
 createPublicKey :: GithubAccessKey -> SSHKeyPair -> Handler Bool
 createPublicKey key SSHKeyPair {..} = do
     eres <- performGithub key "POST" "user/keys" $ Just $ object
-        [ "title" .= asText "FP Complete Haskell Center"
+        [ "title" .= asText "School of Haskell"
         , "key" .= decodeUtf8 publicKey
         ]
     case eres of

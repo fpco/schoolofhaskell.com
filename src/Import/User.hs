@@ -68,7 +68,7 @@ getSSHKeyPair (Entity pid p) =
             , "-f"
             , privateFP
             , "-C"
-            , "FP Complete Haskell Center"
+            , "School of Haskell"
             ]
         if ec == ExitSuccess
             then liftIO $ do

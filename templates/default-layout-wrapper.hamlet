@@ -2,7 +2,7 @@ $newline never
 $doctype 5
 <html>
     <head>
-        <title>#{pageTitle pc} | FP Complete
+        <title>#{pageTitle pc} | School of Haskell
         <meta http-equiv="x-ua-compatible" content="IE=9">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">

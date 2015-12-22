@@ -71,7 +71,7 @@ initialEnv
                 then "dbname=learning_site_test host=localhost user=learning_site password=learning-site port=5432"
                 else "dbname=learning_site host=localhost user=learning_site password=learning-site port=5432")
         , ("LEARNING_SITE_PGPOOLSIZE", "7")
-        , ("LEARNING_SITE_MAIL_FROM", "noreply@fpcomplete.com")
+        , ("LEARNING_SITE_MAIL_FROM", "noreply@schoolofhaskell.com")
         , ("LEARNING_SITE_ANALYTICS", "UA-36928035-1")
         , ("LEARNING_SITE_BIND", "*4")
         , ("LEARNING_SITE_PORT", "3000")

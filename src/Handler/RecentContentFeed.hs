@@ -10,7 +10,7 @@ getRecentContentFeedR = do
             [] -> notFound
             (_, x):_ -> return $ hcWhen x
     newsFeed Feed
-        { feedTitle = "Published Content- FP Complete School of Haskell"
+        { feedTitle = "Published Content- School of Haskell"
         , feedLinkSelf = RecentContentFeedR
         , feedLinkHome = HomeR
         , feedAuthor = "FP Complete"

@@ -687,7 +687,7 @@ sendVerifyEmailHelper email verkey = do
     liftResourceT $ appRenderSendMail y (httpManager y) email $ \from -> (emptyMail from)
         { mailTo = [Address Nothing email]
         , mailHeaders =
-            [ ("Subject", "Welcome to FP Haskell Center")
+            [ ("Subject", "Welcome to School of Haskell")
             ]
         , mailParts = [[htmlPart html]]
         }

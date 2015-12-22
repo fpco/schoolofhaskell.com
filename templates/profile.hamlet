@@ -94,7 +94,7 @@
                 <div .tab-pane #tab-github>
                      $if isNothing (profileGithubAccessKey profile0)
                          <p>
-                             Authorizing GitHub access will both add FP Haskell Center as an authorized app,
+                             Authorizing GitHub access will both add School of Haskell as an authorized app,
                              as well as add your SSH public key to your account to allow us to push to and pull
                              from your repositories.
                      $maybe _ <- profileGithubAccessKey profile0
