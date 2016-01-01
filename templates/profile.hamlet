@@ -117,9 +117,6 @@
                     <h2>Account Deletion
                     <p>
                       Account deletion not yet supported from schoolofhaskell.com.
-                      Please visit the
-                      <a href="https://www.fpcomplete.com/account#management">account management page on fpcomplete.com
-                      instead.
 
 $# Commented out until SoH is the only database user.
 $#                    ^{deleteAccountWarning}
