@@ -7,7 +7,7 @@
 -- List and view tutorials
 
 / HomeR GET
--- FIXME /school HomeR GET
+/school OldSchoolR GET
 /school/#TutorialName/*TutorialNames SchoolTutorialR GET
 /user UsersR GET
 /user/#UserHandle UserR GET

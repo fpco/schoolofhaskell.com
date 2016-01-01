@@ -13,6 +13,9 @@ getHomeR = do
   ga <- makeGoogleAnalytics Nothing
   groupHelper (UserHandle "school") [] Nothing Nothing Nothing Nothing ga
 
+getOldSchoolR :: Handler Html
+getOldSchoolR = redirectWith movedPermanently301 HomeR
+
 -- WARNING: The code below is hideously ugly with lots of weird conditionals.
 -- It was cobbled together by merging three similar pieces of code (SoH
 -- homepage, UserR, and group display). The code needs to be cleaned up, but
