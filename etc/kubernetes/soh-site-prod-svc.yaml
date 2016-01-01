@@ -3,17 +3,19 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: soh-site
+  name: soh-site-prod
   labels:
-    app: soh-site
+    app: soh-site-prod
 spec:
   ports:
   - name: http
     port: 80
+    nodePort: 30991
     targetPort: http
   - name: https
     port: 443
     targetPort: https
+    nodePort: 32078
   selector:
-    app: soh-site
-  type: LoadBalancer
+    app: soh-site-prod
+  type: NodePort
