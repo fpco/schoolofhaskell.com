@@ -27,7 +27,7 @@ spec:
             - name: http
               containerPort: 8080
         - name: soh-site
-          image: fpco/soh-site:latest
+          image: fpco/soh-site:prod
           imagePullPolicy: Always
           env:
             - name: FP_ENVIRONMENT_NAME

@@ -10,12 +10,10 @@ spec:
   ports:
   - name: http
     port: 80
-    nodePort: 30991
     targetPort: http
   - name: https
     port: 443
     targetPort: https
-    nodePort: 32078
+  type: ClusterIP
   selector:
     app: soh-site-prod
-  type: NodePort
