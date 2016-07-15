@@ -7,15 +7,3 @@ docker:
   enable: false
   # No LTS images available for lts-1.x, but this will do
   repo: fpco/stack-build:lts-2.22
-
-# CREATE DOCKER IMAGES FROM OUR APPLICATION
-image:
-  container:
-    # THE NAME OF THE BASE RUNTIME IMAGE
-    base: "fpco/soh-site-base"
-    # THE APPLICATION IMAGE NAME
-    name: "fpco/soh-site"
-    # FOLDERS TO ADD TO THE IMAGE FROM THE PROJECT
-    add:
-      config/: /config/
-      static/: /static/

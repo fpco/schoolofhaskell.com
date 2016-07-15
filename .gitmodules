@@ -1,6 +1,3 @@
 [submodule "static/codemirror"]
 	path = static/codemirror
 	url = https://github.com/fpco/codemirror.git
-[submodule "etc/common/devops-helpers"]
-	path = etc/common/devops-helpers
-	url = https://github.com/fpco/devops-helpers.git
