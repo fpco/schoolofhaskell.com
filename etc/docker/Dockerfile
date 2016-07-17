@@ -13,5 +13,5 @@ RUN apt-get update \
 RUN ln -s config/client_session_key.aes client_session_key.aes
 
 COPY _artifacts/config/ /config/
-COPY _artifacts/static/ /static/
 COPY _artifacts/soh-site /usr/local/bin/soh-site
+COPY _artifacts/static/ /static/
