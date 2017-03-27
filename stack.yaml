@@ -1,6 +1,7 @@
 resolver: lts-1.15
 extra-deps:
 - retry-0.6
+- base-orphans-0
 
 docker:
   # Docker is disabled by default, but can be enabled using `stack --docker`
