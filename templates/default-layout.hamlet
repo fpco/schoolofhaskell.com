@@ -6,7 +6,7 @@
          <span .icon-bar>
          <span .icon-bar>
        <a .brand href="/">
-         <img src="/static/img/ide-logo.png"
+         <img src="/static/img/haskell-logo-wide.png"
               title="School of Haskell">
        <div .nav-collapse .collapse>
          <ul .nav>
