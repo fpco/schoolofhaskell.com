@@ -6,7 +6,7 @@
          <span .icon-bar>
          <span .icon-bar>
        <a .brand href="/">
-         <img src="/static/img/ide-logo.png"
+         <img src="/static/img/haskell-logo-wide.png"
               title="School of Haskell">
        <div .nav-collapse .collapse>
          <ul .nav>
@@ -78,6 +78,12 @@ $if not $ null breadcrumbs'
            $nothing
                <li>
                    <a .logout href=@{AuthR LogoutR}>Logout
+           <li>
+             <a .brand href="https://fpcomplete.com">
+               Sponsored by:
+               <img src="/static/img/logo.png"
+                    title="FPComplete">
+  
     <div .row>
       <div .span12>
         $maybe footer <- mfooter
