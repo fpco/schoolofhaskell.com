@@ -183,6 +183,7 @@ makeFoundation ghid ghsecret rsm = do
             , appGhcEnvs = ghcEnvs
             , appClientSessionBackend = defClientSessionBackend
             , googleOAuth = (googleOAuthClientId, googleOAuthClientSecret)
+            , appAdmins = getAdmins
             }
 
     -- Migrations disabled for SoH until FPHC is shut down. Use

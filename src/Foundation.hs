@@ -108,6 +108,8 @@ data App = App
       -- ^ The client session backend used to store the server session key
     , googleOAuth :: (Text, Text)
     -- ^ client ID, client secret
+    , appAdmins :: HashSet Text
+    -- ^ Set of administrator e-mail addresses
     }
 
 instance HasHttpManager App where
@@ -490,10 +492,9 @@ getNotFoundPage f = do
     defaultLayoutExtra Nothing (Just mempty) Nothing [] Nothing widget
 
 isAdmin :: MonadIO m => App -> User -> m Bool
-isAdmin _app user =
+isAdmin app user =
     liftIO $ fmap (isEmailAdmin (userEmail user)) $
-        -- FIXME: support admins list
-        return mempty
+        return (appAdmins app)
 
 isEmailAdmin :: Text -> HashSet Text -> Bool
 isEmailAdmin email admins = (email `member` admins) || nonProdFP

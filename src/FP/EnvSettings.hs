@@ -78,6 +78,7 @@ initialEnv
         , ("LEARNING_SITE_APPROOT", "http://localhost:3000")
         , ("GOOGLE_OAUTH_CLIENT_ID", "219123459670-s2a0rs5tjptqol2oo3f0u27ac6it9riv.apps.googleusercontent.com")
         , ("GOOGLE_OAUTH_CLIENT_SECRET", "VPosg0Tt04Bwv8Hj-U3L6fhN")
+        , ("LEARNING_SITE_ADMINS", "")
         ]
 
 lookupEnv0 :: MonadThrow m => Text -> m Text
@@ -244,3 +245,6 @@ googleOAuthClientSecret = lookupEnvError "GOOGLE_OAUTH_CLIENT_SECRET"
 
 shouldDoMigration :: Bool
 shouldDoMigration = maybe False ("YES" ==) (lookupEnv "LEARNING_SITE_DO_MIGRATION")
+
+getAdmins :: HashSet Text
+getAdmins = asHashSet $ setFromList $ words $ fromMaybe "" $ lookupEnv "LEARNING_SITE_ADMINS"
