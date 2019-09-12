@@ -1,10 +1,5 @@
 <div .row>
   <div .span12>
-    <p .alert>Interactive code snippets not yet available for SoH 2.0, see our
-     \ <a href=https://www.fpcomplete.com/blog/2016/01/soh-status>Status of
-     \ of School of Haskell 2.0 blog post</a>
-<div .row>
-  <div .span12>
     <h1 itemprop=name>#{publishedTutorialTitle}
 <div .row>
   <div .span7 .meta>
