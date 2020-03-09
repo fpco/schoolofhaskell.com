@@ -1,25 +1,6 @@
 <div .jumbotron .masthead>
   <div .container>
-    <table .action-item>
-      <tbody>
-        <tr>
-          <td .login-side>
-            <h2>Login
-            <div .login-option>
-              <a .google .btn-old .btnd href="/auth/page/googleemail2/forward">
-                <i .icon-google-plus>
-                Google+
-            <div .login-option>
-              <a .persona .btn-old .btna href="javascript:hident2()">
-                <i .icon-user>
-                Persona
-            <div .note> (Automatically creates account)
-          <td .intro-side>
-            <h1>The School of Haskell
-$#              <p .tagline>
-$#                <blockquote>I've learned more about Haskell by using FP Haskell Center in the last two weeks than I have in all these years.
-$#                <cite>Alain O’Dea
-$#                <cite>Software Developer, Verafin
+    <h1>The School of Haskell
 
 <div .container .alt-login>
   <div .row>
