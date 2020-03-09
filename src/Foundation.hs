@@ -585,9 +585,7 @@ instance YesodAuth App where
 
     -- You can add other plugins like BrowserID, email or OAuth here
     authPlugins app =
-        [ authBrowserId browserIdSettings
-        , authEmail
-        , uncurry G2.authGoogleEmail (googleOAuth app)
+        [ authEmail
         ]
 
     authHttpManager = httpManager
