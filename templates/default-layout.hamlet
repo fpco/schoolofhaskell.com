@@ -60,6 +60,9 @@ $if not $ null breadcrumbs'
                 .
     $maybe top <- mtop
       ^{top}
+  <p .alert>
+    <b>Warning!
+    We have decided to retire School of Haskell as an interactive site. We will be disabling the ability to log in and edit content before the end of March 2020.
   ^{widget}
 
 <div .footer>
