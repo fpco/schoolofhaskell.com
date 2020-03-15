@@ -28,7 +28,6 @@ getRecentContentR = do
         maside = Nothing :: Maybe Widget
         maybeNoContent = Nothing :: Maybe Widget
         displayGravatars = True
-        isCurrentUser = False
     defaultLayout $ do
         let title = "Published Content" :: Html
         setTitle title

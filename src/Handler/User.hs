@@ -1,4 +1,9 @@
-module Handler.User where
+module Handler.User
+  ( handleTCGroup
+  , getOldSchoolR
+  , getHomeR
+  , getUserR
+  ) where
 
 import Import hiding (breadcrumbs)
 
@@ -50,39 +55,19 @@ groupHelper :: UserHandle
             -> (Text -> Html)
             -> Handler Html
 groupHelper uh allNames mcontents mbcs mdescription mpageTitle ga = do
-    let meditGroup =
-            case allNames of
-                [] -> Nothing
-                tn:tns -> Just $ EditGroupR tn tns
-    ma <- maybeAuth
-
-    admin <-
-        case ma of
-            Nothing -> return False
-            Just (Entity _ user) -> do
-                app <- getYesod
-                isAdmin app user
-
-    (user, uid, profile, contents) <-
+    (user, _uid, profile, contents) <-
         case mcontents of
             Nothing -> $runDB $ do
                 Entity _ profile <- profileByHandle uh
                 let uid = profileUser profile
                 user <- get404 $ profileUser profile
-                contents <- getTopContents GetTutPath
-                    { gtpShowPrivates = Just uid == fmap entityKey ma
-                    , gtpShowTutorials = True
-                    }
+                contents <- getTopContents
                     (\x -> (UserTutorialR uh x [], []))
-                    (\x ->
-                        let (tn:tns) = allNames ++ [x]
-                         in (DeleteMemberR tn tns, []))
                     uid
-                return (user, uid, profile, filter (not . hiddenGroup uid) contents)
+                return (user, uid, profile, filter (not . hiddenGroup) contents)
 
-              where hiddenGroup uid g = uh == UserHandle "school" &&
-                                        not (Just uid == fmap entityKey ma) &&
-                                        hcSlug g == Just (TutorialName "project-templates")
+              where hiddenGroup g = uh == UserHandle "school" &&
+                                    hcSlug g == Just (TutorialName "project-templates")
 
             Just x -> return x
     let mprofile
@@ -95,8 +80,7 @@ groupHelper uh allNames mcontents mbcs mdescription mpageTitle ga = do
                     | schoolHome -> "School of Haskell"
                     | otherwise -> prettyProfile profile
                 Just pt -> pt
-        isCurrentUser = Just uid == fmap entityKey ma
-        schoolHome = uh == UserHandle "school" && not isCurrentUser
+        schoolHome = uh == UserHandle "school"
     let header
             | schoolHome && null allNames = Nothing
             | otherwise = Just $(widgetFile "user-header")
@@ -118,17 +102,8 @@ groupHelper uh allNames mcontents mbcs mdescription mpageTitle ga = do
     defaultLayoutExtra header (Just msidebar) Nothing breadcrumbs (Just ga) $ do
         setTitle $ toHtml $ pageTitle ++ if null allNames then "" else " - School of Haskell"
         when (schoolHome && null allNames) [whamlet|<h1 itemprop=name>School of Haskell|]
-        when admin
-            [whamlet|
-                <p>
-                    Admin only: the user's email address is
-                    <a href=mailto:#{userEmail user}>#{userEmail user}
-                <p>
-                    <a href=@{AdminR}>Admin page
-            |]
         let maybeNoContent
                 | schoolHome || not (null allNames) = Nothing
-                | isCurrentUser = Just $(widgetFile "blank-my-content")
                 | otherwise = Just [whamlet|<p>This user has not published any content.|]
             maside = Just msidebar
         $(widgetFile "group-contents")

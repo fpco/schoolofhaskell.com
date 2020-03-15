@@ -36,62 +36,29 @@ library
                      FP.Logger
                      FP.Store.Blob
                      Foundation
-                     Handler.AddEmail
-                     Handler.Admin
-                     Handler.AdminActions
-                     Handler.AdminLoginAnalytics
-                     Handler.AdminSystem
-                     Handler.AdminUserList
-                     Handler.AdminVerificationUrl
-                     Handler.Arrange
-                     Handler.AuthInfo
                      Handler.BuildVersion
-                     Handler.ConfirmEmail
                      Handler.ContentProxy
-                     Handler.Dashboard
-                     Handler.DeleteAccount
-                     Handler.DeleteEmail
-                     Handler.DeleteMember
-                     Handler.EditGroup
-                     Handler.EditTutorial
-                     Handler.ExportAllTutorials
-                     Handler.Github
-                     Handler.GithubCallback
-                     Handler.ImpersonateUser
                      Handler.ImportContent
-                     Handler.LikeContent
-                     Handler.MakePrimaryEmail
                      Handler.Media
-                     Handler.MediaUpload
-                     Handler.NewGroup
-                     Handler.NewSshKey
-                     Handler.NewTutorial
-                     Handler.Profile
                      Handler.RecentContent
                      Handler.RecentContentFeed
                      Handler.RecentContentFeedEntry
-                     Handler.ResetSecurityToken
                      Handler.Search
-                     Handler.SetSkillLevel
                      Handler.Sitemap
-                     Handler.TutorialPreview
                      Handler.TutorialRaw
                      Handler.User
                      Handler.UserFeed
                      Handler.UserTutorial
                      Handler.Users
-                     Handler.VerifyEmail
                      Import
                      Import.DBTimed
                      Import.Files
                      Import.Formatting
-                     Import.Github
                      Import.GroupDesc
                      Import.Migration
                      Import.NewContentMember
                      Import.Prune
                      Import.Recent
-                     Import.SecurityToken
                      Import.Tutorial
                      Import.User
                      Model
@@ -173,8 +140,6 @@ library
                  , interpolatedstring-perl6
                  , lifted-base >= 0.2.0.2
                  , markdown
-                 , mime-mail
-                 , mime-mail-ses
                  , mmorph
                  , monad-control
                  , monad-logger
@@ -216,7 +181,6 @@ library
                  , xss-sanitize
                  , yaml
                  , yesod
-                 , yesod-auth
                  , yesod-core >= 1.4
                  , yesod-form
                  , yesod-newsfeed

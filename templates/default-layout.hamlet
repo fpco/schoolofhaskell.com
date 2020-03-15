@@ -13,22 +13,6 @@
            ^{navbar}
          <form class="navbar-search pull-left" action=@{SearchR}>
            <input type="text" class="search-query" placeholder="Search" name="search">
-         <ul .nav .pull-right>
-           $maybe Entity _ a <- ma
-               <li>
-                 $maybe Entity _ profile <- mp
-                    <a href=@{UserR (profileHandle profile)}>
-                       <span .icon-user>
-                       #{unUserHandle $ profileHandle profile}
-                 $nothing
-                    #{userEmail a}
-               <li>
-                 <a href=@{ProfileR} .icon-wrench title="Account Settings">
-               <li>
-                   <a href=@{AuthR LogoutR} .logout-link>Logout
-           $nothing
-               <li>
-                   <a href=@{AuthR LoginR}>Login
 
 $if not $ null breadcrumbs'
   <div .container .breadcrumb-container>
@@ -42,27 +26,9 @@ $if not $ null breadcrumbs'
                 <span .divider>/
 
 <div .container .main-content>
-    $maybe msg <- mmsg
-      <div .alert .alert-block>
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        #{msg}
-    $maybe Entity _ profile <- mp
-        $if profileAutomatic profile
-            <div .alert .alert-block>
-                You have not yet
-                <a href=@{ProfileR}>selected a username#
-                .
-    $maybe Entity _ a <- ma
-        $if (&&) (userNeedsNewPassword a) (not needOldPassword')
-            <div .alert .alert-block>
-                You need to
-                <a href=@{ProfileR}#change-password>change your password#
-                .
     $maybe top <- mtop
       ^{top}
-  <p .alert>
-    <b>Warning!
-    We have decided to retire School of Haskell as an interactive site. We will be disabling the ability to log in and edit content before the end of March 2020.
+  <p .alert>As of March 2020, School of Haskell has been switched to read-only mode.
   ^{widget}
 
 <div .footer>
@@ -71,16 +37,6 @@ $if not $ null breadcrumbs'
       <div .span12>
          <ul .menu>
            ^{navbar}
-           $maybe _ <- monclick
-               <li>
-                   <a href=@{AuthR LoginR}>
-                       Log In
-               <li>
-                   <a href=@{AuthR Yesod.Auth.Email.registerR}>
-                       Sign Up
-           $nothing
-               <li>
-                   <a .logout href=@{AuthR LogoutR}>Logout
            <li>
              <a .brand href="https://fpcomplete.com">
                Sponsored by:

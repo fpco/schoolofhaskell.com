@@ -23,7 +23,6 @@ import qualified Text.Blaze.Html5.Attributes as HA
 import           Text.HTML.DOM (parseLBS)
 import           Text.HTML.SanitizeXSS (filterTags, safeTags, balanceTags)
 import           Text.HTML.TagSoup (Tag (TagOpen, TagClose))
-import           Text.Julius (rawJS)
 import           Text.Markdown
 import           Text.XML (Node (..), Document (..), Element (..), Name (..))
 
@@ -165,13 +164,11 @@ getGroupHolder gid = do
         Just h -> return h
 
 -- | Get the contents of the given user's top level holder.
-getTopContents :: GetTutPath
-               -> (TutorialName -> url)
-               -> (TutorialName -> url) -- ^ deletion URL
+getTopContents :: (TutorialName -> url)
                -> UserId
                -> YesodDB App [HolderContent (Maybe UTCTime) url]
-getTopContents gtp toURL toDeleteURL uid =
-    getTopHolder uid >>= getHolderContents gtp toURL toDeleteURL
+getTopContents toURL uid =
+    getTopHolder uid >>= getHolderContents toURL
 
 getTopHolder :: MonadIO m => UserId -> SqlPersistT m (Entity Holder)
 getTopHolder uid = do
@@ -210,7 +207,7 @@ getUniqueSlug holder title = do
 
 data TutContent url
     = TCGroup UserId Title Textarea [HolderContent (Maybe UTCTime) url]
-    | TCTutorial UserId (Maybe PublishedTutorial) !TutPrev !TutNext !(Entity Tutorial)
+    | TCTutorial UserId PublishedTutorial !TutPrev !TutNext !(Entity Tutorial)
 
 type TutPrev = Maybe TutPrevNext
 type TutNext = Maybe TutPrevNext
@@ -253,11 +250,6 @@ data FollowSlugPathException = GroupCycle
     deriving (Show, Typeable)
 instance Exception FollowSlugPathException
 
-data GetTutPath = GetTutPath
-    { gtpShowTutorials :: !Bool
-    , gtpShowPrivates :: !Bool
-    }
-
 -- | Some legacy logic: checks both the PublishedTutorial table and Git.
 getPublishedTutorial :: MonadIO m
                      => Entity Tutorial
@@ -268,14 +260,12 @@ getPublishedTutorial (Entity tid Tutorial {..}) = do
         Nothing -> return Nothing
         Just (Entity _ pt) -> return $ Just pt
 
-getTutPath :: GetTutPath
-           -> UserId
+getTutPath :: UserId
            -> (TutorialName -> [TutorialName] -> url)
-           -> (TutorialName -> [TutorialName] -> url) -- ^ deletion URL
            -> TutorialName
            -> [TutorialName]
            -> YesodDB App (Maybe ([(url, Text)], TutContent url, TcontentId))
-getTutPath gtp uid toURL toDeleteURL tn0 tns0 = do
+getTutPath uid toURL tn0 tns0 = do
     eres <- followSlugPath uid tn0 tns0
     case eres of
         Left _ -> return Nothing
@@ -290,7 +280,6 @@ getTutPath gtp uid toURL toDeleteURL tn0 tns0 = do
   where
     urlHelper to t = to tn0 $ tns0 ++ [t]
     toURL' = urlHelper toURL
-    toDeleteURL' = urlHelper toDeleteURL
 
     fixBCs _ front [] = return front
     fixBCs usedNames front ((tn, gid):rest) = do
@@ -306,7 +295,7 @@ getTutPath gtp uid toURL toDeleteURL tn0 tns0 = do
     fixContent _ (TcontentGroupSum gid) = do
         Tgroup {..} <- get404 gid
         holder <- getGroupHolder gid
-        contents <- getHolderContents gtp toURL' toDeleteURL' holder
+        contents <- getHolderContents toURL' holder
         return $ Just (TCGroup tgroupAuthor tgroupTitle tgroupDesc contents, tgroupTitle)
     fixContent tmid (TcontentTutorialSum tid) = do
         tm <- get404 tmid
@@ -314,10 +303,8 @@ getTutPath gtp uid toURL toDeleteURL tn0 tns0 = do
         mft <- do
             mpt <- getPublishedTutorial (Entity tid tut)
             lift $ case mpt of
-                Nothing
-                    | gtpShowPrivates gtp -> return Nothing
-                    | otherwise -> notFound
-                Just pt -> return $ Just pt
+                Nothing -> notFound
+                Just pt -> return pt
         let getPN ascDesc comp = selectSource
                 [ TmemberHolder ==. tmemberHolder tm
                 , TmemberPriority `comp` tmemberPriority tm
@@ -327,7 +314,7 @@ getTutPath gtp uid toURL toDeleteURL tn0 tns0 = do
 
         mprev <- getPN Desc (<.)
         mnext <- getPN Asc (>.)
-        return $ Just (TCTutorial tutorialAuthor mft mprev mnext (Entity tid tut), maybe (Title "Unpublished Tutorial") publishedTutorialTitle mft)
+        return $ Just (TCTutorial tutorialAuthor mft mprev mnext (Entity tid tut), publishedTutorialTitle mft)
     fixContent  _ (TcontentProjectSum _) = return Nothing
 
     fixContentLoop :: Sink (Entity Tmember) (YesodDB App) (Maybe TutPrevNext)
@@ -366,35 +353,27 @@ data MemberType = MTTutorial
                 | MTGroup
   deriving Eq
 
-getHolderContents :: GetTutPath
-                  -> (TutorialName -> url)
-                  -> (TutorialName -> url) -- ^ deletion URL
+getHolderContents :: (TutorialName -> url)
                   -> Entity Holder
                   -> YesodDB App [HolderContent (Maybe UTCTime) url]
-getHolderContents gtp toURL toDeleteURL (Entity hid _) =
+getHolderContents toURL (Entity hid _) =
     selectSource [TmemberHolder ==. hid] [Asc TmemberPriority]
-        $$ mapMaybeM (toHolderContent gtp toURL toDeleteURL)
+        $$ mapMaybeM (toHolderContent toURL)
         =$ sinkList
 
-toHolderContent :: GetTutPath
-                -> (TutorialName -> url)
-                -> (TutorialName -> url) -- ^ deletion URL
+toHolderContent :: (TutorialName -> url)
                 -> Entity Tmember
                 -> YesodDB App (Maybe (HolderContent (Maybe UTCTime) url))
-toHolderContent gtp toURL toDeleteURL (Entity _ Tmember {..}) = handleAny
+toHolderContent toURL (Entity _ Tmember {..}) = handleAny
   (\e -> $logWarn (tshow e) >> return Nothing) $ do
     content <- get404 tmemberContent
     mtuple <-
         case content of
-            TcontentTutorialSum tid
-              | gtpShowTutorials gtp -> do
+            TcontentTutorialSum tid -> do
                 tut@Tutorial {..} <- get404 tid
                 mpt <- getPublishedTutorial $ Entity tid tut
                 case mpt of
-                    Nothing
-                        | gtpShowPrivates gtp ->
-                            return $ Just (False, tutorialTitle' tut, tutorialDesc, Nothing, tutorialAuthor, MTTutorial)
-                        | otherwise -> return Nothing
+                    Nothing -> return Nothing
                     Just pt -> return $ Just
                         ( True
                         , tutorialVersionTitle' pt
@@ -403,9 +382,8 @@ toHolderContent gtp toURL toDeleteURL (Entity _ Tmember {..}) = handleAny
                         , tutorialAuthor
                         , MTTutorial
                         )
-              | otherwise -> return Nothing
             TcontentGroupSum gid -> do
-                visible <- isGroupVisible gtp gid
+                visible <- isGroupVisible gid
                 if visible
                     then do
                         Tgroup {..} <- get404 gid
@@ -416,14 +394,13 @@ toHolderContent gtp toURL toDeleteURL (Entity _ Tmember {..}) = handleAny
     case mtuple of
         Just (isPublic, title, desc, when', uid, memberType) -> do
             -- This should be impossible, but just in case...
-            if not (gtpShowPrivates gtp || isPublic)
+            if not isPublic
                 then do
                     $logError $ "toHolderContent attempted to publicize something private: " ++ unTitle title
                     return Nothing
                 else do
                     user <- get404 uid
                     mprofile <- getBy $ UniqueProfile uid
-                    currUser <- lift maybeAuthId
                     case mprofile of
                         Nothing -> return Nothing
                         Just (Entity _ profile) -> return $ Just HolderContent
@@ -436,24 +413,18 @@ toHolderContent gtp toURL toDeleteURL (Entity _ Tmember {..}) = handleAny
                             , hcType = memberType
                             , hcSlug = Just tmemberSlug
                             , hcPublic = isPublic
-                            , hcForeignDeleteURL =
-                                case currUser of
-                                    Just uid' | uid /= uid' -> Just $ toDeleteURL tmemberSlug
-                                    _ -> Nothing
+                            , hcForeignDeleteURL = Nothing
                             }
         Nothing -> return Nothing
 
 -- | Determine if the group contains any public tutorials.
-isGroupVisible :: GetTutPath -> TgroupId -> YesodDB App Bool
-isGroupVisible gtp _ | gtpShowPrivates gtp = return True
-isGroupVisible gtp gid = fromMaybe False <$> findUnderGroup gid memberVisible
+isGroupVisible :: TgroupId -> YesodDB App Bool
+isGroupVisible gid = fromMaybe False <$> findUnderGroup gid memberVisible
   where
-    memberVisible tid
-        | gtpShowTutorials gtp = do
+    memberVisible tid = do
             t <- get404 tid
             msha <- getPublishedTutorial $ Entity tid t
             return (const True <$> msha)
-        | otherwise = return Nothing
 
 -- | Determine if the group contains any public tutorials, and checks if any
 --   authored by the specified author are dirty.
@@ -865,9 +836,3 @@ getTutorialContentId = getContentId UniqueContentTutorial TcontentTutorialSum
 
 getGroupContentId :: TgroupId -> Handler TcontentId
 getGroupContentId = getContentId UniqueContentGroup TcontentGroupSum
-
-likeWidget :: TcontentId -> Widget
-likeWidget tcid = do
-    ident <- newIdent
-    let likeUrl = LikeContentR tcid
-    $(widgetFile "like-widget")

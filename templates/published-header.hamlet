@@ -11,10 +11,7 @@
            <a href=@{UserR $ profileHandle author}>#{prettyProfile author}
 
        <span .view-edit-link .pull-right>
-          $maybe editLink <- meditLink
-             <a href=@{editLink}>Edit this page
-          $nothing
-             <a href=@{TutorialRawR authorid publishedTutorialSha} .view-source-link>View Markdown source
+           <a href=@{TutorialRawR authorid publishedTutorialSha} .view-source-link>View Markdown source
 
     <p .tags>
        $if not $ null tags
@@ -24,8 +21,6 @@
 
 <div .row>
   <div .span7 .meta>
-       ^{likeWidget tcid}
-
        <span .sociallinksunicode .social>
           <!-- http://yannesposito.com/Scratch/en/blog/Social-link-the-right-way/ -->
           <a href=https://twitter.com/home?status=$url$ target=_blank>#

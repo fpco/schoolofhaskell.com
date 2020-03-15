@@ -1,7 +1,7 @@
 module Handler.UserTutorial where
 
 import Data.Text (splitOn)
-import Handler.User
+import Handler.User (handleTCGroup)
 import Import hiding (DList)
 
 getUserTutorialR :: UserHandle -> TutorialName -> [TutorialName] -> Handler Html
@@ -25,21 +25,13 @@ tutorialHelper :: ([(Text, Text)] -> DList (RouteParams, Text))
                -> [TutorialName]
                -> Handler Html
 tutorialHelper bcsFront profile toURL0 tn tns = do
-    ma <- maybeAuth
-
     let toURL x y = (toURL0 x y, [])
-        toDeleteURL x y = (DeleteMemberR x y, [])
-
-    let isOwner = Just (profileUser profile) == fmap entityKey ma
 
     let location = intercalate "/" $
           unUserHandle (profileHandle profile) : map unTutorialName (tn : tns)
 
     (bcs, tc) <- $runDB $ do
-        mres <- getTutPath GetTutPath
-            { gtpShowPrivates = isOwner
-            , gtpShowTutorials = True
-            } (profileUser profile) toURL toDeleteURL tn tns
+        mres <- getTutPath (profileUser profile) toURL tn tns
         case mres :: Maybe ([(RouteParams, Text)], TutContent RouteParams, TcontentId) of
             Nothing -> do
                 -- If we can't find our content at the current location, check past locations.
@@ -49,10 +41,10 @@ tutorialHelper bcsFront profile toURL0 tn tns = do
                 -- Huh... using getBy404 caused a segfault, the following seems
                 -- to work just fine.
                 case mcl of
-                    Nothing -> lift (notFoundMaybeLogin ma)
+                    Nothing -> lift notFound
                     Just (Entity _ (ContentLocation _ lcid)) -> do
                         mcanroute <- getCanonicalRouteContent lcid
-                        lift $ maybe (notFoundMaybeLogin ma) (redirectWith status301) mcanroute
+                        lift $ maybe notFound (redirectWith status301) mcanroute
             Just (bcs :: [(RouteParams, Text)], tc :: TutContent RouteParams, cid :: TcontentId) -> do
                 mlc <- getBy $ UniqueContentLocation location
                 case mlc of
@@ -74,25 +66,7 @@ tutorialHelper bcsFront profile toURL0 tn tns = do
                 return (bcsFront [] bcs, tc)
 
     case tc of
-        TCTutorial authorid Nothing mprev mnext (Entity _tid tutorial@Tutorial {..}) -> do
-            (maside,body) <- displayTutorial tutorialContent
-            (header, footer, sidebar) <- getTutorialExtras
-            Entity _ author <- $runDB $ getBy404 $ UniqueProfile authorid
-            let mgroup =
-                    case drop 1 $ reverse bcs of
-                        x:_parent:_rest -> Just x
-                        _ -> Nothing
-                mkLink newLast
-                    | null tns = UserTutorialR (profileHandle profile) newLast []
-                    | otherwise = UserTutorialR (profileHandle profile) tn $ replaceLast tns newLast
-                related :: [(Route App, Text)]
-                related = []
-                bottomFooter = $(widgetFile "creative-commons")
-            defaultLayoutExtra Nothing Nothing (Just bottomFooter) bcs Nothing $ do
-                setTitle $ toHtml $ unTitle tutorialTitle ++ " - School of Haskell"
-                let relatedContent = $(widgetFile "related-content")
-                $(widgetFile "user-tutorial-unpublished")
-        TCTutorial authorid (Just PublishedTutorial {..}) mprev mnext (Entity tid tutorial@Tutorial {..}) -> do
+        TCTutorial authorid PublishedTutorial {..} mprev mnext (Entity _tid tutorial@Tutorial {..}) -> do
             -- Get related links
             -- FIXME: re-enable something like this
 
@@ -110,12 +84,6 @@ tutorialHelper bcsFront profile toURL0 tn tns = do
             Entity _ author <- $runDB $ getBy404 $ UniqueProfile authorid
             (maside, body) <- displayTutorial publishedTutorialContent
             (header, footer, sidebar) <- getTutorialExtras
-
-            let meditLink =
-                     if isOwner
-                         then Just $ EditTutorialR tn tns
-                         else Nothing
-            tcid <- getTutorialContentId tid
 
             let tags = [] :: [Text] -- FIXME implement tags
                 header' = Just $(widgetFile "published-header")
@@ -135,23 +103,11 @@ tutorialHelper bcsFront profile toURL0 tn tns = do
                 $(widgetFile "user-tutorial")
                 $(widgetFile "published-footer")
         TCGroup author pageTitle description contents -> do
-          when (null contents && not isOwner) notFound
+          when (null contents) notFound
           mpath <- makeGAPath ("/group" <>)
           ga <- makeGoogleAnalytics mpath
           handleTCGroup profile bcs tn tns author (unTitle pageTitle)
                         description contents ga
-
-notFoundMaybeLogin :: Maybe (Entity User) -> Handler a
-notFoundMaybeLogin ma = do
-    let notLoggedIn = isNothing ma
-    content <- getNotFoundPage $ \page -> return
-        [whamlet|
-            ^{page}
-            $if notLoggedIn
-                <br>
-                <p>Maybe you need to <a href=@{AuthR LoginR}>login</a>?
-        |]
-    sendResponseStatus status404 content
 
 -- | Get the URL and title of the given tutorial path.
 getRelated :: Text -- ^ path, e.g. username/group/tutorial
@@ -166,12 +122,9 @@ getRelated path =
             case mp of
                 Just (Entity _ Profile {..}) -> do
                     let toURL = UserTutorialR user
-                    mres <- getTutPath GetTutPath
-                        { gtpShowPrivates = False
-                        , gtpShowTutorials = True
-                        } profileUser (\_ _ -> ()) (\_ _ -> ()) tn tns
+                    mres <- getTutPath profileUser (\_ _ -> ()) tn tns
                     case mres of
-                        Just (_, TCTutorial _ (Just PublishedTutorial {..}) _ _ _, _) -> do
+                        Just (_, TCTutorial _ PublishedTutorial {..} _ _ _, _) -> do
                             return $ Just (toURL tn tns, publishedTutorialTitle)
                         _ -> return Nothing
                 Nothing -> return Nothing

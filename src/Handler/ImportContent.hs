@@ -50,41 +50,6 @@ form (Entity holderid holder) =
                                                 | otherwise -> return $ Left "Cannot construct loop"
 
 
-getImportContentR :: TutorialNames -> Handler Html
-getImportContentR tns = do
-    Entity _ Profile {..} <- requireProfile
-    unless (profileHandle == UserHandle "school") notFound
-    holder <- $runDB $
-        case tns of
-            [] -> getTopHolder profileUser
-            tn:tns' -> do
-                eres <- followSlugPath profileUser tn tns'
-                case eres of
-                    Right (_, Entity _ (TcontentGroupSum gid), _) -> getBy404 $ UniqueHolderGroup gid
-                    _ -> notFound
-    ((res, widget), enctype) <- runFormPost $ form holder
-    let backURL =
-            case tns of
-                [] -> UserR profileHandle
-                tn:tns' -> UserTutorialR profileHandle tn tns'
-    case res of
-        FormSuccess (_, (a, b, c)) -> do
-            $runDB $ addLink a b c
-            setMessage "Link added"
-            redirect backURL
-        _ -> defaultLayout $ do
-            setTitle "Add link"
-            [whamlet|
-                <form method=post enctype=#{enctype}>
-                    ^{widget}
-                    <div>
-                        <button>Add link
-                        <a href=@{backURL}>Cancel
-            |]
-
-postImportContentR :: TutorialNames -> Handler Html
-postImportContentR = getImportContentR
-
 addLink :: TcontentId -> HolderId -> TmemberId -> YesodDB App ()
 addLink cid hid mid = do
     origMember <- get404 mid

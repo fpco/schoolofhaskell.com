@@ -9,10 +9,8 @@ import qualified FP.Store.Blob as Blob
 import           Foundation as Import
 import           Import.Files as Import
 import           Import.Formatting as Import
-import           Import.Github as Import
 import           Import.Prune as Import
 import           Import.Recent as Import
-import           Import.SecurityToken as Import
 import           Import.Tutorial as Import
 import           Import.User as Import
 import           Settings.Development as Import

@@ -6,7 +6,6 @@ module Application
     ) where
 
 import Import hiding (Proxy)
-import Yesod.Auth
 import Yesod.Default.Main
 import Yesod.Default.Handlers hiding (getRobotsR)
 import Network.Wai.Middleware.RequestLogger
@@ -14,14 +13,11 @@ import Network.Wai.Middleware.MethodOverride
 import Network.Wai.Application.Static (defaultFileServerSettings)
 import System.Directory (doesFileExist)
 import System.Exit (exitWith, ExitCode (ExitSuccess))
-import System.Process (rawSystem)
 import FP.EnvSettings
 import qualified FP.Store.Blob as Blob
-import Network.Mail.Mime (Address (Address), Mail, renderMail', renderSendMail)
 import Network.Wai (Middleware)
 import Network.Wai.Handler.Warp (runSettings, defaultSettings, setPort, setHost, setOnException, defaultShouldDisplayException)
 import Language.Haskell.TH.Syntax (qLocation)
-import Network.Mail.Mime.SES (renderSendMailSES, SES (SES), usEast1)
 import Network.Wai.Middleware.Gzip (gzip)
 import System.Log.FastLogger
 import Control.Concurrent (threadDelay)
@@ -43,50 +39,19 @@ import Database.Persist.Sql (migrate)
 
 -- Import all relevant handler modules here.
 -- Don't forget to add new modules to your cabal file!
-import Handler.Dashboard
-import Handler.Profile
-import Handler.ResetSecurityToken
-import Handler.VerifyEmail
 import Handler.UserTutorial
 import Handler.User
 import Handler.UserFeed
-import Handler.TutorialPreview
 import Handler.BuildVersion
 import Handler.Media
-import Handler.MediaUpload
 import Handler.Users
 import Handler.ContentProxy
 import Handler.RecentContent
 import Handler.RecentContentFeed
 import Handler.RecentContentFeedEntry
 import Handler.Sitemap
-import Handler.Github
-import Handler.GithubCallback
 import Handler.TutorialRaw
 import Handler.Search
-import Handler.AuthInfo
-import Handler.AddEmail
-import Handler.ConfirmEmail
-import Handler.MakePrimaryEmail
-import Handler.DeleteEmail
-import Handler.SetSkillLevel
-import Handler.EditTutorial
-import Handler.Arrange
-import Handler.NewGroup
-import Handler.NewTutorial
-import Handler.ImportContent
-import Handler.EditGroup
-import Handler.DeleteMember
-import Handler.LikeContent
-import Handler.ExportAllTutorials
-import Handler.Admin
-import Handler.AdminActions
-import Handler.AdminLoginAnalytics
-import Handler.AdminSystem
-import Handler.AdminUserList
-import Handler.AdminVerificationUrl
-import Handler.ImpersonateUser
-import Handler.NewSshKey
 
 -- This line actually creates our YesodSite instance. It is the second half
 -- of the call to mkYesodData which occurs in Foundation.hs. Please see
@@ -99,10 +64,9 @@ mkYesodDispatch "App" resourcesApp
 -- migrations handled by Yesod.
 makeApplication :: ByteString -- ^ github client id
                 -> ByteString -- ^ github client secret
-                -> (Manager -> Text -> (Text -> Mail) -> ResourceT IO ()) -- ^ render and send email
                 -> IO (Application, LogFunc)
-makeApplication ghid ghsecret rsm = do
-    (foundation, logFunc) <- makeFoundation ghid ghsecret rsm
+makeApplication ghid ghsecret = do
+    (foundation, logFunc) <- makeFoundation ghid ghsecret
 
     logWare <- mkRequestLogger def
         { outputFormat =
@@ -135,9 +99,8 @@ getAuthMiddleware =
 
 makeFoundation :: ByteString -- ^ github client id
                -> ByteString -- ^ github client secret
-               -> (Manager -> Text -> (Text -> Mail) -> ResourceT IO ()) -- ^ render and send email
                -> IO (App, LogFunc)
-makeFoundation ghid ghsecret rsm = do
+makeFoundation ghid ghsecret = do
     manager <- newManager
 
     s <- staticSite
@@ -172,9 +135,6 @@ makeFoundation ghid ghsecret rsm = do
             , appBlobStore = makeBlobStore manager
             , githubClientId = ghid
             , githubClientSecret = ghsecret
-            , appRenderSendMail = \manager' text withFrom ->
-                let withFrom' from = withFrom $ Address (Just "FP Complete") from
-                 in rsm manager' text withFrom'
             -- , ekgVariables = (counters,gauges,labels)
             , staticRoot = fromMaybe (learningSiteApproot ++ "/static") learningSiteStaticRoot
             , appLogger = logger
@@ -244,51 +204,20 @@ getApplicationDev = do
 
 makeApplicationDev :: IO (Application, LogFunc)
 makeApplicationDev =
-    makeApplication ghid ghsecret devrsm
+    makeApplication ghid ghsecret
   where
     -- TODO: need something here once github is used for something.
     ghid = "FIXME"
     ghsecret = "FIXME"
-
--- | Use the system sendmail command to render and send email.
-sendmailRSM :: MonadIO m
-            => Text
-            -> Manager
-            -> Text
-            -> (Text -> Mail)
-            -> m ()
-sendmailRSM from _manager _email mkmail = liftIO $ renderSendMail $ mkmail from
-
-devrsm :: MonadIO m
-       => Manager
-       -> Text
-       -> (Text -> Mail)
-       -> m ()
-devrsm _manager _email mail = liftIO $ do
-    bs <- renderMail' $ mail "noreply@schoolofhaskell.com"
-    writeFile "/tmp/mail.txt" bs
-    void $ rawSystem "xdg-open" ["/tmp/mail.txt"]
 
 main :: IO ()
 main = useSyslog "soh-site" $ do
     makeApp <-
         if deploymentType == DevDeployment
             then return makeApplicationDev
-            else do
-                let sesFrom = learningSiteMailFrom
-                let rsmAwsSes manager email mkmail = renderSendMailSES
-                        manager
-                        (SES (encodeUtf8 sesFrom) [encodeUtf8 email] awsAccessKey awsSecretKey usEast1)
-                        (mkmail sesFrom)
-                    rsm
-                        | deploymentType == AwsDeployment = rsmAwsSes
-                        | development = devrsm
-                        | otherwise   = sendmailRSM sesFrom
-
-                return $ makeApplication
+            else return $ makeApplication
                     (encodeUtf8 githubClientID)
                     (encodeUtf8 FP.EnvSettings.githubClientSecret)
-                    rsm
     (app, logFunc) <- makeApp
     let onExc _ e =  when (defaultShouldDisplayException e) $ logFunc
             $(qLocation >>= liftLoc)

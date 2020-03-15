@@ -6,12 +6,6 @@ module Foundation
     , Handler
     , Widget
     , Form
-    , maybeAuth
-    , maybeAuthId
-    , requireAuth
-    , requireAuthId
-    , requireAuthMsg
-    , requireProfile
     , module Settings
     , module Model
     , defaultLayoutExtra
@@ -20,40 +14,27 @@ module Foundation
     , defaultWidgetJs
     , getNotFoundPage
     , isAdmin
-    , maybeServerSession
-    , requireServerSession
-    , setServerSessionIfMissing
-    , getServerSessionKey
-    , sessionLog
-    , sessionLogDB
-    , newSecurityToken
     , makeGoogleAnalytics
     , makeGAPath
-    , checkPasswordSecurity'
     , Import.DBTimed.runDB
     , getUserByEmail
     , getUserByEmail404
     , getClearServerSessionR
-    , sendVerifyEmailHelper
-    , Foundation.randomString
-    , addUnverifiedDB
     , shouldLog'
     , isProductionOrStaging
     , isProductionServer
     , sessionDuration
     , updateSessionMap -- exported for testing only
     , keyToInt
+    , profileByHandle
     ) where
 
 import           Blaze.ByteString.Builder (toByteString)
 import           ClassyPrelude.Yesod hiding (pi)
-import           Control.Concurrent.Lifted (myThreadId)
-import           Control.Monad.Trans.Maybe (MaybeT(..), runMaybeT)
 import           Control.Monad.Trans.Resource (allocate, release)
 import           Data.Aeson (withText)
 import           Data.Conduit.Pool
 import qualified Data.List
-import           Data.Text (strip)
 import           Database.Persist.Sql (runSqlConn,
                                        PersistentSqlException
                                            (Couldn'tGetSQLConnection))
@@ -65,23 +46,14 @@ import qualified FP.Store.Blob as Blob
 import           Import.DBTimed
 import qualified Model
 import           Model hiding (UniqueUser, UniqueIdent)
-import           Network.Mail.Mime hiding (htmlPart)
-import           Network.Wai as WAI
 import qualified Settings
 import           Settings (widgetFile)
 import           Settings.Development (development)
 import           Settings.StaticFiles
 import           System.Posix.Types (CPid)
-import           System.Random (randomIO, randomRIO)
 import           System.Random.MWC (Gen)
-import           Text.Blaze.Html.Renderer.Utf8 (renderHtml)
 import qualified Text.Email.Validate
 import           Text.Hamlet (hamletFile)
-import           Yesod.Auth
-import           Yesod.Auth.BrowserId
-import           Yesod.Auth.Email
-import qualified Yesod.Auth.GoogleEmail2 as G2
-import qualified Yesod.Auth.Message
 import           Yesod.Core.Types (Logger)
 import           Yesod.RssFeed (rssLink)
 
@@ -98,7 +70,6 @@ data App = App
     , appBlobStore :: Blob.Store
     , githubClientId :: ByteString
     , githubClientSecret :: ByteString
-    , appRenderSendMail :: Manager -> Text -> (Address -> Mail) -> ResourceT IO ()
     , staticRoot :: Text -- ^ root for static URLs
     , appLogger :: Logger
     , appPrivate :: Bool
@@ -151,115 +122,6 @@ serverSessionId = "SERVER_SESSION"
 getClearServerSessionR :: Handler ()
 getClearServerSessionR = deleteSession serverSessionId
 
--- | Ensure that a server session is created for this user and added to their
--- client-side session.
-setServerSessionIfMissing :: Maybe UserId -> YesodDB App ServerSessionId
-setServerSessionIfMissing muid = do
-    msid <- maybeServerSession muid
-    maybe (setServerSession muid) return msid
-
--- | Create a new server session and set its key in the client side session.
-setServerSession :: Maybe UserId -> YesodDB App ServerSessionId
-setServerSession muid = do
-    now <- liftIO getCurrentTime
-    sid <- insert $ ServerSession muid now
-    setSession serverSessionId $ toPathPiece sid
-    return sid
-
-maybeServerSession :: Maybe UserId -> YesodDB App (Maybe ServerSessionId)
-maybeServerSession muid = do
-    msid <- (>>= fromPathPiece) <$> lookupSession serverSessionId
-    case msid of
-        Nothing -> return Nothing
-        Just sid -> do
-            ms <- get sid
-            case ms of
-                Just (ServerSession muid' _)
-                    | muid == muid' -> do
-                        now <- liftIO getCurrentTime
-                        update sid [ServerSessionWhen =. now]
-                        return $ Just sid
-                _ -> return Nothing
-
--- | Require that a server session be available. If not present, we create a
--- new one and set it in the user's client side session.
---
--- Note that, for logged in users, we tie the session down to the user ID to
--- inhibit hijacking.
-requireServerSession :: Maybe UserId -> YesodDB App ServerSessionId -- FIXME cache
-requireServerSession muid = do
-    msid <- maybeServerSession muid
-    case msid of
-        Nothing -> setServerSession muid
-        Just sid -> return sid
-
--- | Put something into the SessionLog table.
-sessionLogDB :: Text -> YesodDB App ()
-sessionLogDB msg = do
-    tid <- myThreadId
-    muid <- lift maybeAuthId
-    msid <- maybeServerSession muid
-    case msid of
-        Nothing -> return ()
-        Just sid -> do
-            now <- liftIO getCurrentTime
-            insert_ $ SessionLog sid now $ concat
-                [ "["
-                , tshow tid
-                , "] "
-                , msg
-                ]
-
--- | Put something into the SessionLog table.
-sessionLog :: Text -> Handler ()
-sessionLog = $runDBT . sessionLogDB
-
-requireProfile :: Handler (Entity Profile)
-requireProfile = fmap unCurrentUserProfile $ cached $ fmap CurrentUserProfile $ do
-    uid <- requireAuthId
-    $runDBT $ do
-        mprofile <- getBy $ UniqueProfile uid
-        case mprofile of
-            Nothing -> do
-                (uhandle, nhandle) <- getNewHandle
-                let profile = Profile
-                        { profileUser = uid
-                        , profileHandle = uhandle
-                        , profileNormalizedHandle = nhandle
-                        , profileDisplay = ""
-                        , profileKeymap = Nothing
-                        , profileGithubAccessKey = Nothing
-                        , profileSshKeyPair = Nothing
-                        , profileBio = Nothing
-                        , profileCompany = ""
-                        , profileHomepage = Nothing
-                        , profileTelephone = Nothing
-                        , profileTheme = Just "Panda"
-                        , profileFontSize = 14
-                        , profileSearchWithRegex = Just False
-                        , profileSettingsSubstitutions = Nothing
-                        , profileAutomatic = True
-                        , profileDisqus = Nothing
-                        , profileProjectTemplatesHandle = Nothing
-                        }
-                pid <- insert profile
-                return $ Entity pid profile
-            Just profile -> return profile
-  where
-    getNewHandle = do
-        number <- liftIO $ randomRIO (1, 10000000 :: Int)
-        let uhandle = UserHandle $ "fpuser" ++ tshow number
-        case normalizeHandle uhandle of
-            Left _ -> getNewHandle
-            Right nhandle -> do
-                mp <- getBy $ UniqueNormalizedHandle nhandle
-                case mp of
-                    Nothing -> return (uhandle, nhandle)
-                    Just _ -> getNewHandle
-
-newtype CurrentUserProfile = CurrentUserProfile { unCurrentUserProfile :: Entity Profile }
-    deriving Typeable
-
 defaultLayoutExtra :: Maybe Widget -- ^ top content
                    -> Maybe Widget -- ^ right-column content
                    -> Maybe Widget -- ^ extra footer content
@@ -268,21 +130,6 @@ defaultLayoutExtra :: Maybe Widget -- ^ top content
                    -> Widget -- ^ page content
                    -> Handler Html
 defaultLayoutExtra mtop maside mfooter (Data.List.zip [1..] -> breadcrumbs') mga widget = do
-    mmsg <- getMessage
-    ma <- maybeAuth
-
-    _ <- $runDBT $ setServerSessionIfMissing $ entityKey <$> ma
-
-    mp <-
-        case ma of
-            Nothing -> return Nothing
-            Just _ -> Just <$> requireProfile
-
-    needOldPassword' <-
-        case ma of
-            Nothing -> return True
-            Just (Entity aid _) -> needOldPassword aid
-
     -- We break up the default layout into two components:
     -- default-layout is the contents of the body tag, and
     -- default-layout-wrapper is the entire page. Since the final
@@ -293,11 +140,6 @@ defaultLayoutExtra mtop maside mfooter (Data.List.zip [1..] -> breadcrumbs') mga
         defaultWidget
 
         rssLink RecentContentFeedR "Recently published content"
-
-        monclick <-
-            case ma of
-                Just _ -> return Nothing
-                Nothing -> Just <$> Yesod.Auth.BrowserId.createOnClick browserIdSettings AuthR
 
         let navbar = $(widgetFile "navbar")
 
@@ -320,62 +162,7 @@ defaultWidgetJs = do
         [ design_js_init_js
         , js_blockUI_js
         , bootstrap_js_bootstrap_js
-
-        , codemirror_lib_codemirror_js
-        , codemirror_addon_mode_multiplex_js
-        , codemirror_addon_runmode_runmode_js
-
-        , codemirror_mode_xml_xml_js
-        , codemirror_mode_css_css_js
-        , codemirror_mode_javascript_javascript_js
-        , codemirror_mode_htmlmixed_htmlmixed_js
-        , codemirror_mode_haskell_haskell_js
-        , codemirror_mode_haskell_routes_js
-        , codemirror_mode_haskell_shakespeare_shakespeare_js
-        , codemirror_mode_haskell_shakespeare_css_js
-        , codemirror_mode_haskell_shakespeare_julius_js
-        , codemirror_mode_haskell_shakespeare_lucius_js
-        , codemirror_mode_haskell_shakespeare_cassius_js
-        , codemirror_mode_haskell_shakespeare_hamlet_js
-        , codemirror_mode_haskell_shakespeare_yesod_js
-        , codemirror_mode_clike_clike_js
-        , codemirror_mode_markdown_markdown_js
-        , codemirror_mode_yaml_yaml_js
-
-        , codemirror_keymap_emacs_js
-        , codemirror_keymap_vim_js
-
-        , codemirror_addon_dialog_dialog_js
-        , codemirror_addon_edit_closebrackets_js
-        , codemirror_addon_edit_matchbrackets_js
-        , codemirror_addon_edit_trailingspace_js
-        , codemirror_addon_hint_show_hint_js
-        , codemirror_addon_search_search_js
-        , codemirror_addon_search_searchcursor_js
-        , codemirror_addon_search_match_highlighter_js
-        , codemirror_addon_selection_active_line_js
-
-        , js_fpco_codemirror_js
         ])
-    codeMirror
-  where
-    codeMirror :: Widget
-    codeMirror = do
-        keyMap <- liftHandlerT getKeyMap
-
-        $(widgetFile "codemirror")
-
-    getKeyMap = do
-        muid <- maybeAuthId
-        mprofile <-
-            case muid of
-                Nothing -> return Nothing
-                Just uid -> $runDBT $ getBy $ UniqueProfile uid
-        return $
-            case mprofile >>= profileKeymap . entityVal of
-                Nothing -> asText ""
-                Just KeymapVim -> "vim"
-                Just KeymapEmacs -> "emacs"
 
 defaultWidgetCss :: Widget
 defaultWidgetCss = do
@@ -437,29 +224,10 @@ instance Yesod App where
         Just $ uncurry (joinPath y (staticRoot y)) $ renderRoute s
     urlRenderOverride _ _ = Nothing
 
-    -- The page to be redirected to when authentication is required.
-    authRoute _ = Just $ AuthR LoginR
-
     -- Place Javascript at bottom of the body tag so the rest of the page loads first
     jsLoader _ = BottomOfBody
 
     shouldLog _ = shouldLog'
-
-    isAuthorized route _
-        | "admin" `member` routeAttrs route = do
-            app <- getYesod
-            muser <- maybeAuth
-            case muser of
-                Nothing -> return AuthenticationRequired
-                Just (Entity _ user) -> do
-                    x <- isAdmin app user
-                    return $ if x
-                        then Authorized
-                        else Unauthorized "Admin access only"
-        | otherwise = return Authorized
-
-    maximumContentLength _ (Just MediaUploadR{}) = Just 300000
-    maximumContentLength _ _ = Just (2 * 1024 * 1024) -- 2MB
 
     -- Avoid path rewriting for the Wordpress business site
     cleanPath _ s@("business":_) = Right s
@@ -502,9 +270,6 @@ isEmailAdmin email admins = (email `member` admins) || nonProdFP
     nonProdFP = not isProductionOrStaging && fpEnvironmentType /= "development" &&
                 "@fpcomplete.com" `isSuffixOf` email
 
-browserIdSettings :: BrowserIdSettings
-browserIdSettings = def
-
 -- How to run database actions.
 instance PidConnectionPool App where
     pidConnectionPool = connPool
@@ -538,117 +303,6 @@ instance YesodPersistRunner App where
 
         return (DBRunner $ \x -> runReaderT x conn, cleanup)
 
-instance YesodAuth App where
-    type AuthId App = UserId
-
-    -- Where to send a user after successful login
-    loginDest _ = DashboardR
-    -- Where to send a user after logout
-    logoutDest _ = HomeR
-
-    redirectToReferer _ = True
-
-    -- Suppress "You are now logged in" message
-    onLogin = return ()
-
-    onLogout = return ()
-
-    getAuthId creds = join $ $runDBT $ do
-        let email = credsIdent creds
-        x <- getUserByEmail False email
-        now <- liftIO getCurrentTime
-        Entity uid user <-
-            case x of
-                Just uent -> return uent
-                Nothing -> do
-                    muser <- getBy $ Model.UniqueUser email
-                    uent@(Entity uid _) <-
-                        case muser of
-                            Nothing -> do
-                                st <- newSecurityToken
-                                let user = User
-                                        { userEmail = email
-                                        , userPassword = Nothing
-                                        , userVerkey = Nothing
-                                        , userVerified = True
-                                        , userSecurityToken = st
-                                        , userNeedsNewPassword = credsPlugin creds == "email"
-                                        }
-                                uid <- insert user
-                                return $ Entity uid user
-                            Just uent -> return uent
-                    insert_ $ Ident uid email (mkLowerCaseText email) True
-
-                    return uent
-        insert_ $ Login (keyToInt uid) (Just (userEmail user)) now $ credsPlugin creds
-        return $ return $ Just uid
-
-    -- You can add other plugins like BrowserID, email or OAuth here
-    authPlugins app =
-        [ authEmail
-        ]
-
-    authHttpManager = httpManager
-
-    loginHandler = lift $ do
-        -- If we're already logged in, redirect appropriately
-        ma <- maybeAuth
-        case ma of
-            Just {} -> getYesod >>= redirectUltDest . loginDest
-            Nothing -> defaultLayoutExtra Nothing (Just mempty) Nothing [] Nothing $ do
-                setTitle "Log in to School of Haskell"
-                $(widgetFile "login")
-
-    renderAuthMessage _ _ Yesod.Auth.Message.Register = "Send confirmation link"
-    renderAuthMessage _ _ msg = Yesod.Auth.Message.defaultMessage msg
-
-    -- Override the default to allow security token authentication and enforce
-    -- two-factor authentication.
-    maybeAuthId = do
-        req <- waiRequest
-        muid <-
-            case words . decodeUtf8 <$> lookup "authorization" (WAI.requestHeaders req) of
-                Just ["token", t] -> fmap (fmap entityKey) $ $runDBT $ getBy $ UniqueSecurityToken $ SecurityToken t
-                _ -> return Nothing
-        case muid of
-            Nothing -> checkSessionKey
-            Just uid -> return $ Just uid
-      where
-        checkSessionKey = do
-            ms <- lookupSession credsSessionKey
-            case ms of
-                Nothing -> return Nothing
-                Just s ->
-                    case fromPathPiece s of
-                        Nothing -> return Nothing
-                        Just aid -> fmap (fmap entityKey) $ cachedAuth aid
-
-        cachedAuth aid = runMaybeT $ do
-            a <- MaybeT $ fmap unCachedMaybeAuth
-                        $ cached
-                        $ fmap CachedMaybeAuth
-                        $ $runDBT
-                        $ get aid
-            return $ Entity aid a
-
-        credsSessionKey = "_ID"
-
-instance YesodAuthPersist App
-
-newtype CachedMaybeAuth = CachedMaybeAuth { unCachedMaybeAuth :: Maybe User }
-    deriving (Typeable)
-
-getServerSessionKey :: Handler (Maybe ByteString)
-getServerSessionKey = do
-    app <- getYesod
-    let SessionBackend client = appClientSessionBackend app
-    req <- waiRequest
-    (clientMap, _) <- liftIO $ client req
-    return $ lookup serverSessionKey clientMap
-
-serverSessionKey :: Text
-serverSessionKey = "_SERVER_SESSION"
-
 sessionDuration :: Int
 sessionDuration = (60 * 60 * 24 * 7) -- one week
 
@@ -676,100 +330,6 @@ getUserByEmail onlyPrimary =
 getUserByEmail404 :: Bool -> Text -> YesodDB App (Entity User)
 getUserByEmail404 x y = getUserByEmail x y >>= maybe notFound return
 
-sendVerifyEmailHelper :: Text -> Text -> Handler ()
-sendVerifyEmailHelper email verkey = do
-    Entity uid _ <- $runDBT $ getUserByEmail404 True email
-    y <- getYesod
-    render <- getUrlRenderParams
-    let verurl = VerifyEmailR uid verkey
-        html = $(hamletFile "templates/verify-email.hamlet") render
-    liftResourceT $ appRenderSendMail y (httpManager y) email $ \from -> (emptyMail from)
-        { mailTo = [Address Nothing email]
-        , mailHeaders =
-            [ ("Subject", "Welcome to School of Haskell")
-            ]
-        , mailParts = [[htmlPart html]]
-        }
-  where
-    htmlPart html = Part
-        { partType = "text/html; charset=utf-8"
-        , partEncoding = None
-        , partFilename = Nothing
-        , partContent = renderHtml html
-        , partHeaders = []
-        }
-
-addUnverifiedDB :: Text -> Text -> YesodDB App UserId
-addUnverifiedDB email verkey = do
-    st <- newSecurityToken
-    insert User
-        { userEmail = email
-        , userPassword = Nothing
-        , userVerkey = Just verkey
-        , userVerified = False
-        , userSecurityToken = st
-        , userNeedsNewPassword = True
-        }
-
-instance YesodAuthEmail App where
-    type AuthEmailId App = UserId
-
-    afterPasswordRoute _ = ProfileR
-
-    addUnverified email verkey = $runDBT $ addUnverifiedDB email verkey
-
-    sendVerifyEmail email verkey _ = sendVerifyEmailHelper email verkey
-    getVerifyKey = $runDBT . fmap (join . fmap userVerkey) . get
-    setVerifyKey uid key = $runDBT $ update uid [UserVerkey =. Just key]
-    verifyAccount uid = $runDBT $ do
-        mu <- get uid
-        case mu of
-            Nothing -> return Nothing
-            Just _ -> do
-                update uid [UserVerified =. True]
-                return $ Just uid
-    getPassword = $runDBT . fmap (join . fmap userPassword) . get
-    setPassword uid pass = $runDBT $ update uid [UserPassword =. Just pass, UserNeedsNewPassword =. False]
-    getEmailCreds email = $runDBT $ do
-        mu' <- getUserByEmail False email
-        mu <-
-            case mu' of
-                Nothing -> do
-                    mp <-
-                        case normalizeHandle $ UserHandle $ strip email of
-                            Left _ -> return Nothing
-                            Right nh -> getBy $ UniqueNormalizedHandle nh
-                    case mp of
-                        Nothing -> return Nothing
-                        Just (Entity _ p) -> do
-                            let uid = profileUser p
-                            u <- get404 uid
-                            return $ Just $ Entity uid u
-                Just x -> return $ Just x
-        case mu of
-            Nothing -> return Nothing
-            Just (Entity uid u) -> return $ Just EmailCreds
-                { emailCredsId = uid
-                , emailCredsAuthId = Just uid
-                , emailCredsStatus = isJust $ userPassword u
-                , emailCredsVerkey = userVerkey u
-                , emailCredsEmail = userEmail u
-                }
-    getEmail = $runDBT . fmap (fmap userEmail) . get
-
-    checkPasswordSecurity _ t = return $ checkPasswordSecurity' t
-
-    confirmationEmailSentResponse identifier = fmap toTypedContent $ defaultLayout $ do
-        setTitle "Confirmation email sent"
-        $(widgetFile "confirmation-email-sent")
-
-    normalizeEmailAddress _ = toLower
-
-checkPasswordSecurity' :: Text -> Either Text ()
-checkPasswordSecurity' t
-    | length t < 3 = Left "Password must be at least three characters"
-    | otherwise = Right ()
-
 -- This instance is required to use forms. You can modify renderMessage to
 -- achieve customized and internationalized form validation messages.
 instance RenderMessage App FormMessage where
@@ -790,14 +350,6 @@ prettyProfile p
     | null (profileDisplay p) = unUserHandle (profileHandle p)
     | otherwise = profileDisplay p
 
-newSecurityToken :: (MonadResource m, MonadLogger m) => SqlPersistT m SecurityToken
-newSecurityToken = do
-    s <- liftIO randomIO
-    mu <- getBy $ UniqueSecurityToken s
-    case mu of
-        Nothing -> return s
-        Just _ -> newSecurityToken
-
 -- | Make a Google Analytics generator from the current session.
 makeGoogleAnalytics
   :: (MonadHandler m,HandlerSite m ~ App,m ~ HandlerT App IO)
@@ -805,13 +357,10 @@ makeGoogleAnalytics
                 -- the current URL's path.
   -> m (Text -> Html)
 makeGoogleAnalytics mpath = do
-  loggedIn <- fmap isJust maybeAuthId
   let userTypeValue :: Text
-      userTypeValue | loggedIn = "Member"
-                    | otherwise = "Visitor"
+      userTypeValue = "Visitor"
       userTypeScope :: Text
-      userTypeScope | loggedIn = "2"  -- Session-level.
-                    | otherwise = "1" -- Visitor-level.
+      userTypeScope = "1" -- Visitor-level.
   return $ \section ->
     [shamlet|
         $maybe analytics <- learningSiteAnalytics
@@ -844,24 +393,26 @@ makeGAPath f = do
     (parts,queries) <- fmap renderRoute currRoute
     return (f (decodeUtf8 (toByteString (joinPath app "" parts queries))))
 
--- | Like a standard requireAuth, but if user is redirected to login page, sets
--- a message first.
-requireAuthMsg :: Bool -- ^ set ult destination to the current page?
-               -> Html
-               -> Handler (Entity User)
-requireAuthMsg ud msg = do
-    ma <- maybeAuth
-    case ma of
-        Nothing -> do
-            setMessage msg
-            when ud $ getCurrentRoute >>= mapM_ setUltDest
-            redirect $ AuthR LoginR
-        Just a -> return a
-
-randomString :: Handler Text
-randomString = getYesod >>= liftIO . randomKey
-
 keyToInt :: ( ToBackendKey (PersistEntityBackend r) r
             , Enum (BackendKey (PersistEntityBackend r))
             ) => Key r -> Int
 keyToInt = fromEnum . toBackendKey
+
+profileByHandle :: UserHandle -> YesodDB App (Entity Profile)
+
+-- MS 2013-04-21 The following should be sufficient, but I got segfaults when
+-- using it. The segfaults seem to be a bug in GHC, and one I've encountered
+-- before. I'm not sure if it's simply a matter of a badly compiled library,
+-- but I want to make sure the bug never rears its head in production.
+-- Therefore, writing this the long way instead.
+--
+--profileByHandle = either (const $ lift notFound) (getBy404 . UniqueNormalizedHandle) . normalizeHandle
+
+profileByHandle uh =
+    case normalizeHandle uh of
+        Left _ -> lift notFound
+        Right nh -> do
+            mp <- getBy $ UniqueNormalizedHandle nh
+            case mp of
+                Nothing -> notFound
+                Just p -> return p

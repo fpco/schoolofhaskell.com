@@ -37,11 +37,6 @@
                      $else
                        $if fmap profileHandle mprofile == Just (UserHandle "school")
                            <a .author-name>#{prettyProfile $ hcProfile hc}
-                           $if isCurrentUser
-                     $maybe url <- hcForeignDeleteURL hc
-                       $if isCurrentUser
-                         <form method=post action=@?{url} style=display:inline-block>
-                            <input type=submit value="Remove foreign content">
                <div .media-content>
                  $if null $ unTextarea $ hcDesc hc
                      <p .muted>No description given.

@@ -9,9 +9,7 @@ import qualified Data.ByteString.Base64 as B64
 import qualified Data.Serialize as Cereal
 import qualified Data.Text
 import           Database.Persist.Sql as DB
-import           Network.Mail.Mime (randomString)
 import           Prelude (Show (show), Read (readsPrec))
-import           System.Random (Random, randomR, random)
 import           Text.Blaze.Html (ToMarkup (..))
 import           Data.Data
 
@@ -152,10 +150,6 @@ titleToSlug =
         | 'a' <= c && c <= 'z' = c
         | '0' <= c && c <= '9' = c
         | otherwise = ' '
-
-instance Random SecurityToken where
-    randomR = const random
-    random = first (SecurityToken . pack) . randomString 15
 
 newtype GithubAccessKey = GithubAccessKey ByteString
     deriving (Show, Eq, Read, Generic, PersistField)
@@ -311,7 +305,7 @@ newtype TutorialConcurrentToken = TutorialConcurrentToken'
     { unTutorialConcurrentToken :: Int32 }
     deriving (Eq, Show, Data, Read, Typeable, Num, Ord, Generic,
               ToJSON, FromJSON, Hashable,
-              PersistField, Random)
+              PersistField)
 
 instance Default TutorialConcurrentToken where
     def = TutorialConcurrentToken' 1
