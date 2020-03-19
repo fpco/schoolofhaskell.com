@@ -20,6 +20,8 @@
 /tutorial-raw/#UserId/#BlobSHA TutorialRawR GET
 /search SearchR GET
 
+/export ExportR GET
+
 -- Media upload / serving
 
 /media/#Blob.MediaUUIDType MediaR GET

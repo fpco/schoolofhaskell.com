@@ -44,6 +44,7 @@ import Handler.User
 import Handler.UserFeed
 import Handler.BuildVersion
 import Handler.Media
+import Handler.Export
 import Handler.Users
 import Handler.ContentProxy
 import Handler.RecentContent

@@ -39,6 +39,7 @@ library
                      Handler.BuildVersion
                      Handler.ContentProxy
                      Handler.ImportContent
+                     Handler.Export
                      Handler.Media
                      Handler.RecentContent
                      Handler.RecentContentFeed
@@ -129,6 +130,7 @@ library
                  , esqueleto
                  , exceptions
                  , fast-logger >= 2.1
+                 , filepath
                  , file-embed
                  , file-location
                  , gravatar
