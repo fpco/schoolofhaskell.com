@@ -126,6 +126,7 @@ makeFoundation ghid ghsecret = do
     defClientSessionBackend <- defaultClientSessionBackend sessionDuration "config/client_session_key.aes"
 
     makeBlobStore <- Blob.getMakeStore
+    exportStatus <- newIORef ExportNotComplete
 
     let app = App
             { getStatic = s
@@ -145,6 +146,7 @@ makeFoundation ghid ghsecret = do
             , appClientSessionBackend = defClientSessionBackend
             , googleOAuth = (googleOAuthClientId, googleOAuthClientSecret)
             , appAdmins = getAdmins
+            , appExportStatus = exportStatus
             }
 
     -- Migrations disabled for SoH until FPHC is shut down. Use
@@ -184,6 +186,8 @@ makeFoundation ghid ghsecret = do
 
               -- Delete UserDeletion records that are one hour old.
               deleteWhere [UserDeletionCreated <. addUTCTime (-3600) now']
+
+    void $ forkIO $ performExportLoop (appExportStatus app) p
 
     return (app, logFunc)
 

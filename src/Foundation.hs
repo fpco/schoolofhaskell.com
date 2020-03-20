@@ -1,6 +1,7 @@
 {-# OPTIONS -fno-warn-orphans -O1 #-}
 module Foundation
     ( App (..)
+    , ExportStatus (..)
     , Route (..)
     , resourcesApp
     , Handler
@@ -57,6 +58,11 @@ import           Text.Hamlet (hamletFile)
 import           Yesod.Core.Types (Logger)
 import           Yesod.RssFeed (rssLink)
 
+data ExportStatus
+  = ExportSuccess !String -- ^ file
+  | ExportError !String
+  | ExportNotComplete
+
 -- | The site argument for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
 -- starts running, such as database connections. Every handler will have
@@ -81,6 +87,7 @@ data App = App
     -- ^ client ID, client secret
     , appAdmins :: HashSet Text
     -- ^ Set of administrator e-mail addresses
+    , appExportStatus :: IORef ExportStatus
     }
 
 instance HasHttpManager App where
