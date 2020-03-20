@@ -31,7 +31,6 @@ before_script:
 build:
   stage: build
   only:
-    #- master
     - prod
   script:
     # Clear *_TOKEN variables during code build so that compile-time code can't access them
@@ -39,11 +38,8 @@ build:
     - docker build -t "${DOCKER_IMAGE}" etc/docker
     - docker login -u gitlab-ci-token -p "${CI_BUILD_TOKEN}" "${CI_REGISTRY}"
     - docker push "${DOCKER_IMAGE}"
-    - |
-      if [[ "$CI_BUILD_REF_NAME" == "master" ]]; then
-        docker tag "${DOCKER_IMAGE}" "${CI_REGISTRY_IMAGE}:latest"
-        docker push "${CI_REGISTRY_IMAGE}:latest"
-      fi
+    - docker tag "${DOCKER_IMAGE}" "${CI_REGISTRY_IMAGE}:latest"
+    - docker push "${CI_REGISTRY_IMAGE}:latest"
 
 deploy_prod:
   stage: deploy
